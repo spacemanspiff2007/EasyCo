@@ -20,7 +20,7 @@ class test_configfile(unittest.TestCase):
             top_level_entry = ConfigEntry(default_value=5.5, description='testest')
 
 
-        f = Test(Path('../tests/text.yml'))
+        f = Test(Path(__file__).with_name('text.yml'))
         self.assertIsInstance(f.a, asdf)
         self.assertIsInstance(f.top_level_str, str)
         self.assertIsInstance(f.top_level_entry, ConfigEntry)

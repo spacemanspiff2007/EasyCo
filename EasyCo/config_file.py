@@ -18,6 +18,7 @@ class ConfigFile(EasyCo.ConfigContainer):
         self._path = path.absolute()
 
     def load(self):
+        self._path = self._path.resolve()
 
         cfg = {}
         if not self._path.parent.is_dir():
