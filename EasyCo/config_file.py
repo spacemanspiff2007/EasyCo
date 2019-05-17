@@ -1,5 +1,6 @@
 import unittest, typing, sys, ruamel.yaml, inspect, voluptuous
 from pathlib import Path
+import ruamel.yaml
 from copy import deepcopy
 
 import EasyCo
@@ -20,7 +21,7 @@ class ConfigFile(EasyCo.ConfigContainer):
     def load(self):
         self._path = self._path.resolve()
 
-        cfg = {}
+        cfg = ruamel.yaml.comments.CommentedMap()
         if not self._path.parent.is_dir():
             raise FileNotFoundError(f'Configuration folder {self._path.parent} does not exist!')
 
@@ -28,7 +29,7 @@ class ConfigFile(EasyCo.ConfigContainer):
             with self._path.open('r', encoding='utf-8') as file:
                 cfg = yaml.load(file)
             if cfg is None:
-                cfg = {}
+                cfg = ruamel.yaml.comments.CommentedMap()
 
         # add default values
         changed = self._update_yaml(cfg, insert=False)
