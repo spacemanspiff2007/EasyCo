@@ -26,6 +26,7 @@ setuptools.setup(
     description="Easy configuration with yaml files",
     keywords=[
         'yaml',
+        'yml',
         'config',
         'configuration',
         'file'
