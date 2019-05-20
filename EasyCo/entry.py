@@ -1,4 +1,5 @@
-import voluptuous, ruamel.yaml
+import pathlib
+import voluptuous
 
 
 class ValueNotConfigured:
@@ -20,6 +21,19 @@ class ConfigEntry:
 
         if self.value_default is not ValueNotConfigured and self.value_type is ValueNotConfigured:
             self.value_type = type(self.value_default)
+
+        # ---------------------------------------------------------------
+        # Custom validators:
+        # ---------------------------------------------------------------
+
+        # we load strings and not Path values, in case we modify the value later to a path
+        if self.value_type is pathlib.Path:
+            self.validator = str
+            #self.validator = voluptuous.Coerce(pathlib.Path)
+
+        # # so we can enter '5' and still get a proper int value
+        # if self.value_type is float or self.value_type is int:
+        #     self.validator = voluptuous.Coerce(self.value_type)
 
     def __repr__(self):
         ret = f'<{self.__class__.__name__} '

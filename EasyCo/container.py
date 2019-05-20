@@ -96,5 +96,4 @@ class ConfigContainer:
         for container in self.__container.values():
             changed += container._set_value(data[container.__class__.__name__])
 
-
         return changed

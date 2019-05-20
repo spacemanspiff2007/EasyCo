@@ -6,6 +6,8 @@ Welcome to the EasyCo documentation!
 .. toctree::
    :maxdepth: 2
    :caption: User Documentation
+
+   configuration
    
 
 .. Commented out

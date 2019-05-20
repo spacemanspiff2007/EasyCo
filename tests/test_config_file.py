@@ -17,10 +17,10 @@ class test_configfile(unittest.TestCase):
         class Test(ConfigFile):
             a = asdf()
             top_level_str = 'adsf'
-            top_level_entry = ConfigEntry(default_value=5.5, description='testest')
+            top_level_entry = ConfigEntry(default_value=5.5, description=' testest')
 
 
-        f = Test(Path(__file__).with_name('text.yml'))
+        f = Test(Path(__file__).with_name('test_files') / 'test.yml')
         self.assertIsInstance(f.a, asdf)
         self.assertIsInstance(f.top_level_str, str)
         self.assertIsInstance(f.top_level_entry, ConfigEntry)

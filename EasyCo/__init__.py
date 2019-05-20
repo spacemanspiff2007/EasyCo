@@ -1,3 +1,3 @@
-from .config_entry import ConfigEntry
-from .config_container import ConfigContainer
+from .entry import ConfigEntry
+from .container import ConfigContainer
 from .config_file import ConfigFile
