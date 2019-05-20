@@ -8,7 +8,7 @@ class ValueNotConfigured:
 
 class ConfigEntry:
     def __init__(self, default_value=ValueNotConfigured, value_type=ValueNotConfigured, validator=ValueNotConfigured,
-                  required=False, description=None):
+                 required=False, description=None):
         self.value_type = value_type
         self.value_default = default_value
         self.validator = validator
@@ -29,7 +29,7 @@ class ConfigEntry:
         # we load strings and not Path values, in case we modify the value later to a path
         if self.value_type is pathlib.Path:
             self.validator = str
-            #self.validator = voluptuous.Coerce(pathlib.Path)
+            # self.validator = voluptuous.Coerce(pathlib.Path)
 
         # # so we can enter '5' and still get a proper int value
         # if self.value_type is float or self.value_type is int:
@@ -42,9 +42,9 @@ class ConfigEntry:
         return ret[:-2] + ' >'
 
     def set_validator(self, name: str, data: dict):
-        key =(voluptuous.Required if self.required else voluptuous.Optional) \
-             (schema=name, description=self.description,
-              default=self.value_default if self.value_default is not ValueNotConfigured else voluptuous.UNDEFINED)
+        key = (voluptuous.Required if self.required else voluptuous.Optional)(
+            schema=name, description=self.description,
+            default=self.value_default if self.value_default is not ValueNotConfigured else voluptuous.UNDEFINED)
         data[key] = self.value_type if self.validator is ValueNotConfigured else self.validator
 
     def set_default(self, name: str, data: dict) -> bool:

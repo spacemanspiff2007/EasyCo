@@ -1,7 +1,9 @@
-import unittest, logging, sys, dataclasses, inspect, voluptuous, typing, ruamel.yaml
-
+import inspect
+import ruamel.yaml
+import typing
 
 from . import ConfigEntry
+
 
 class ConfigContainer:
 
@@ -51,7 +53,7 @@ class ConfigContainer:
         for func in self.__notify:
             try:
                 func()
-            except Exception as e:
+            except Exception:
                 pass
 
     def _update_schema(self, schema, insert=True):

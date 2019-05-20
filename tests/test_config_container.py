@@ -1,4 +1,7 @@
-import unittest, voluptuous, ruamel.yaml, io
+import io
+import ruamel.yaml
+import unittest
+import voluptuous
 
 from EasyCo import ConfigContainer, ConfigEntry
 
@@ -10,6 +13,7 @@ class TestClassSimple(ConfigContainer):
 
     def function_b(self) -> bool:
         pass
+
 
 class test_configfile(unittest.TestCase):
 
@@ -63,7 +67,7 @@ class test_configfile(unittest.TestCase):
         ist = {}
         test = A()
         test._update_schema(ist)
-        soll = { 'A':{
+        soll = { 'A': {
             voluptuous.Required('asdf', default=123456789): int,
             voluptuous.Required('bcdf', default='asdf'): str,
 
@@ -92,7 +96,8 @@ class test_configfile(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    import logging, sys
+    import logging
+    import sys
     _log = logging.getLogger()
     ch = logging.StreamHandler(sys.stdout)
     ch.setLevel(logging.DEBUG)
@@ -100,4 +105,3 @@ if __name__ == "__main__":
     _log.addHandler(ch)
 
     unittest.main()
-

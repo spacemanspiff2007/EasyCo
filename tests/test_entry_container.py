@@ -1,12 +1,14 @@
-import unittest, voluptuous, ruamel.yaml
+import unittest
+import voluptuous
 
-from EasyCo import ConfigContainer, ConfigEntry
+from EasyCo import ConfigContainer
 
 
 class Test1(ConfigContainer):
     type_hint_and_value: float = 0
     only_type_hint: int
     only_value = 7.5
+
 
 class Test2(ConfigContainer):
     type_hint_and_value = 'asdf'
@@ -24,9 +26,9 @@ class test_configfile(unittest.TestCase):
         TestContainer()._update_schema(ist)
         soll = {'TestContainer' : {
             'Test1': {
-            voluptuous.Required('type_hint_and_value', default=0): float,
-            voluptuous.Required('only_type_hint'): int,
-            voluptuous.Required('only_value', default=7.5): float,
+                voluptuous.Required('type_hint_and_value', default=0): float,
+                voluptuous.Required('only_type_hint'): int,
+                voluptuous.Required('only_value', default=7.5): float,
             },
             'Test2' : {
                 voluptuous.Required('type_hint_and_value', default='asdf'): str,
@@ -61,7 +63,8 @@ class test_configfile(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    import logging, sys
+    import logging
+    import sys
     _log = logging.getLogger()
     ch = logging.StreamHandler(sys.stdout)
     ch.setLevel(logging.DEBUG)
@@ -69,4 +72,3 @@ if __name__ == "__main__":
     _log.addHandler(ch)
 
     unittest.main()
-

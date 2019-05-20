@@ -1,8 +1,7 @@
-import unittest, voluptuous, ruamel.yaml, io
+import unittest
 from pathlib import Path
 
 from EasyCo import ConfigEntry, ConfigContainer, ConfigFile
-
 
 
 class test_configfile(unittest.TestCase):
@@ -18,7 +17,6 @@ class test_configfile(unittest.TestCase):
             a = asdf()
             top_level_str = 'adsf'
             top_level_entry = ConfigEntry(default_value=5.5, description=' testest')
-
 
         f = Test(Path(__file__).with_name('test_files') / 'test.yml')
         self.assertIsInstance(f.a, asdf)
@@ -37,7 +35,9 @@ class test_configfile(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    import unittest, logging, sys
+    import unittest
+    import logging
+    import sys
 
     _log = logging.getLogger()
     ch = logging.StreamHandler(sys.stdout)

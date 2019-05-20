@@ -1,7 +1,7 @@
-import unittest, typing, sys, ruamel.yaml, inspect, voluptuous
 from pathlib import Path
+
 import ruamel.yaml
-from copy import deepcopy
+import voluptuous
 
 import EasyCo
 
@@ -11,6 +11,7 @@ yaml.default_style = False
 yaml.width = 1000000
 yaml.allow_unicode = True
 yaml.sort_base_mapping_type_on_output = False
+
 
 class ConfigFile(EasyCo.ConfigContainer):
 
@@ -46,4 +47,3 @@ class ConfigFile(EasyCo.ConfigContainer):
                 yaml.dump(cfg, file)
 
         self._set_value(validated_cfg)
-
