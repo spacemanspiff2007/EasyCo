@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import io
 import ruamel.yaml
 import voluptuous
 
@@ -47,3 +48,12 @@ class ConfigFile(EasyCo.ConfigContainer):
                 yaml.dump(cfg, file)
 
         self._set_value(validated_cfg)
+
+    def _print_created_cfg(self):
+        cfg = ruamel.yaml.comments.CommentedMap()
+        self._update_yaml(cfg, insert=False)
+
+        tmp = io.StringIO()
+        ruamel.yaml.YAML().dump(cfg, tmp)
+        output = tmp.getvalue()
+        print(output)

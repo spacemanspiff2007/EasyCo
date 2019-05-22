@@ -1,6 +1,8 @@
 import pathlib
 import voluptuous
 
+from . import EasyCoConfig
+
 
 class ValueNotConfigured:
     pass
@@ -8,7 +10,7 @@ class ValueNotConfigured:
 
 class ConfigEntry:
     def __init__(self, default_value=ValueNotConfigured, value_type=ValueNotConfigured, validator=ValueNotConfigured,
-                 required=False, description=None):
+                 required=True, description=None):
         self.value_type = value_type
         self.value_default = default_value
         self.validator = validator
@@ -41,16 +43,21 @@ class ConfigEntry:
             ret += f'{k}: {v}, '
         return ret[:-2] + ' >'
 
-    def set_validator(self, name: str, data: dict):
+    def set_validator(self, name: str, data: dict) -> dict:
         key = (voluptuous.Required if self.required else voluptuous.Optional)(
             schema=name, description=self.description,
             default=self.value_default if self.value_default is not ValueNotConfigured else voluptuous.UNDEFINED)
         data[key] = self.value_type if self.validator is ValueNotConfigured else self.validator
+        return data
 
-    def set_default(self, name: str, data: dict) -> bool:
+    def set_default(self, name: str, data: dict, cfg: EasyCoConfig) -> bool:
 
         # skip if we don't have a default value
         if self.value_default is ValueNotConfigured:
+            return False
+
+        # respect option to only create required keys
+        if not self.required and not cfg.create_optional_keys:
             return False
 
         changed = False
