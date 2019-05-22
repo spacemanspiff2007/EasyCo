@@ -18,11 +18,11 @@ class ConfigFile(EasyCo.ConfigContainer):
 
     def __init__(self, path: Path):
         super().__init__()
-        self._path = path.absolute()
+        self._path = path.resolve()
+        if self._path.suffix == '':
+            self._path = self._path.with_name(self._path.name + '.yml')
 
     def load(self):
-        self._path = self._path.resolve()
-
         cfg = ruamel.yaml.comments.CommentedMap()
         if not self._path.parent.is_dir():
             raise FileNotFoundError(f'Configuration folder {self._path.parent} does not exist!')

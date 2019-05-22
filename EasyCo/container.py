@@ -7,8 +7,6 @@ from . import ConfigEntry, EasyCoConfig, DEFAULT_CONFIGURATION
 
 class ConfigContainer:
 
-
-
     def __init__(self):
         super().__init__()
         annotations = self.__class__.__dict__.get('__annotations__', {})
@@ -42,14 +40,15 @@ class ConfigContainer:
 
             # create them ourselves
             value_type = annotations.get(name, type(value))
-            self.__entries[name] = ConfigEntry(value_type=value_type, default_value=value)
+            self.__entries[name] = ConfigEntry(
+                value_type=self.get_value_validator(name, value_type), default_value=value)
 
         for name, value_type in annotations.items():
             # we have already processed this
             if name in declared:
                 continue
 
-            self.__entries[name] = ConfigEntry(value_type=value_type, required=False)
+            self.__entries[name] = ConfigEntry(value_type=self.get_value_validator(name, value_type), required=False)
 
         # notify functions
         self.__notify = []
@@ -57,6 +56,12 @@ class ConfigContainer:
         # set parent_configuration
         for container in self.__container.values():
             container._set_config(self.__cfg)
+
+    def get_value_validator(self, var_name: str, var_type):
+        return var_type
+
+    def set_value_from_file(self, var_name: str, new_value):
+        return new_value
 
     def subscribe_for_changes(self, func):
         if func not in self.__notify:
@@ -124,6 +129,7 @@ class ConfigContainer:
             except KeyError:
                 continue
 
+            value_new = self.set_value_from_file(name, value_new)
             value_cur = getattr(self, name, None)
             if value_cur != value_new:
                 setattr(self, name, value_new)
