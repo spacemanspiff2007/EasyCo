@@ -2,5 +2,5 @@ top_level_str: adsf
 top_level_entry: 5.5  #  testest
 asdf:
   my_int: 5
-  my_float: 3.3                 # hallo
-  my_float_comment: 5.5         # testest
+  my_float: 3.3
+  my_float_comment: 5.5  # testest

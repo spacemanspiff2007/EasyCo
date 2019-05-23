@@ -6,16 +6,17 @@ from EasyCo import ConfigEntry, ConfigContainer, ConfigFile, EasyCoConfig
 TEST_DIR = Path(__file__).with_name('test_files')
 
 
-class TOP_LEVEL_CONTAINER(ConfigContainer):
-    SUB_INT = 7
-    SUB_FLOAT: float = 7
-    SUB_FLOAT_COMMENT = 7.7
+class SUB_CONTAINER(ConfigContainer):
+    SUB_INT = 5
+    SUB_FLOAT: float = 5.0
+    SUB_FLOAT_COMMENT = 5.5
 
 
 class Testfile(ConfigFile):
     TOP_LEVEL_STR: str
-    TOP_LEVEL_ENTRY = 0.0
-    bla = TOP_LEVEL_CONTAINER()
+    TOP_LEVEL_ENTRY = 4.4
+    TOP_LEVEL_LIST = []
+    bla = SUB_CONTAINER
 
     _cfg = EasyCoConfig()
 
@@ -30,7 +31,7 @@ class test_configfile(unittest.TestCase):
             my_float_comment = ConfigEntry(default_value=5.5, description='testest')
 
         class Test(ConfigFile):
-            a = asdf()
+            a = asdf
             top_level_str = 'adsf'
             top_level_entry = ConfigEntry(default_value=5.5, description=' testest')
 
@@ -56,12 +57,12 @@ class test_configfile(unittest.TestCase):
         file._cfg.lower_case_keys = True
         file.load()
 
-        self.assertEqual(file.TOP_LEVEL_ENTRY, 5.5)
+        self.assertEqual(file.TOP_LEVEL_ENTRY, 9.9)
         self.assertEqual(file.TOP_LEVEL_STR, 'UPPER_lower')
 
-        self.assertEqual(file.bla.SUB_INT, 5)
-        self.assertEqual(file.bla.SUB_FLOAT, 3.3)
-        self.assertEqual(file.bla.SUB_FLOAT_COMMENT, 5.5)
+        self.assertEqual(file.bla.SUB_INT, 7)
+        self.assertEqual(file.bla.SUB_FLOAT, 7.0)
+        self.assertEqual(file.bla.SUB_FLOAT_COMMENT, 7.7)
 
     def test_load_upper(self):
 
@@ -69,12 +70,12 @@ class test_configfile(unittest.TestCase):
         file._cfg.lower_case_keys = False
         file.load()
 
-        self.assertEqual(file.TOP_LEVEL_ENTRY, 5.5)
+        self.assertEqual(file.TOP_LEVEL_ENTRY, 9.9)
         self.assertEqual(file.TOP_LEVEL_STR, 'UPPER_lower')
 
-        self.assertEqual(file.bla.SUB_INT, 5)
-        self.assertEqual(file.bla.SUB_FLOAT, 3.3)
-        self.assertEqual(file.bla.SUB_FLOAT_COMMENT, 5.5)
+        self.assertEqual(file.bla.SUB_INT, 7)
+        self.assertEqual(file.bla.SUB_FLOAT, 7.0)
+        self.assertEqual(file.bla.SUB_FLOAT_COMMENT, 7.7)
 
 
 

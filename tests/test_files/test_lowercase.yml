@@ -1,6 +1,8 @@
+top_level_entry: 9.9
 top_level_str: UPPER_lower
-top_level_entry: 5.5
-top_level_container:
-  sub_int: 5
-  sub_float: 3.3
-  sub_float_comment: 5.5  # this is a comment
+sub_container:
+  sub_int: 7
+  sub_float: 7.0
+  sub_float_comment: 7.7
+
+top_level_list: []
