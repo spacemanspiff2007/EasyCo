@@ -122,7 +122,7 @@ class ConfigContainer:
         return changed
 
     def _set_value(self, data) -> int:
-        changed = 0
+        value_changed = 0
         for name, obj in self.__entries.items():
             try:
                 value_new = data[self.__get_key_name(name)]
@@ -133,14 +133,19 @@ class ConfigContainer:
             value_cur = getattr(self, name, None)
             if value_cur != value_new:
                 setattr(self, name, value_new)
-                changed += 1
+                value_changed += 1
 
+        container_changed = 0
         for container in self.__container.values():
             try:
                 container_data = data[self.__get_container_name(container)]
             except KeyError:
                 continue
 
-            changed += container._set_value(container_data)
+            container_changed += container._set_value(container_data)
 
-        return changed
+        # notify all subscribers that a value has changed
+        if value_changed or container_changed:
+            self._notify()
+
+        return value_changed + container_changed

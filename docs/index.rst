@@ -7,6 +7,7 @@ Welcome to the EasyCo documentation!
    :maxdepth: 2
    :caption: User Documentation
 
+   description
    configuration
    
 

@@ -17,18 +17,18 @@ Usage:
    :hide_code:
    print 'Execute this python code'
 """
-import sys
+import functools
 import os
+import re
+import subprocess
+import sys
+import traceback
 from pathlib import Path
 
-from docutils.parsers.rst import Directive, directives
 from docutils import nodes
-
-import functools
-import traceback
-import subprocess
-
+from docutils.parsers.rst import Directive, directives
 from sphinx.util import logging
+
 log = logging.getLogger(__name__)
 
 
@@ -43,19 +43,21 @@ def PrintException( func):
             raise
     return f
 
+RE_SKIPLINE = re.compile( f'#\s*skip\s*line\s*$', re.IGNORECASE)
 
 class ExecuteCode(Directive):
     """ Sphinx class for execute_code directive
     """
     has_content = True
     required_arguments = 0
-    optional_arguments = 5
+    optional_arguments = 8
 
     option_spec = {
         'linenos': directives.flag,
         'output_language': directives.unchanged,  # Runs specified pygments lexer on output data
         'hide_code': directives.flag,
-        'hide_headers': directives.flag,
+        'header_code': directives.unchanged,
+        'header_output': directives.unchanged,
         'filename': directives.path,
         'hide_filename': directives.flag,
         'precode': directives.unchanged
@@ -96,6 +98,9 @@ class ExecuteCode(Directive):
                     continue
                 if hide:
                     continue
+
+                if line.strip().endswith('#skip')
+
                 shown_code += line + '\n'
             shown_code = shown_code.strip('\n').strip()
 
@@ -104,22 +109,18 @@ class ExecuteCode(Directive):
 
             input_code['language'] = language
             input_code['linenos'] = 'linenos' in self.options
-            if 'hide_headers' not in self.options:
-                suffix = ''
-                if 'hide_filename' not in self.options:
-                    suffix = '' if filename is None else str(filename)
-                output.append(nodes.caption(
-                    text='Code %s' % suffix))
+            if 'header_code' in self.options:
+                output.append(nodes.caption(text=self.options['header_code']))
             output.append(input_code)
 
         # Show the code results
-        if 'hide_headers' not in self.options:
-            output.append(nodes.caption(text='Results'))
+        if 'header_output' in self.options:
+            output.append(nodes.caption(text=self.options['header_output']))
         # add precode
         if 'precode' in self.options:
             code = self.options['precode'] + '\n' + code
 
-        code_results = execute_code( code)
+        code_results = execute_code( code).strip()
         for out in code_results.split('\n'):
             if 'Error in ' in out:
                 log.error(f'Possible Error in codeblock: {out}')
@@ -136,7 +137,7 @@ WORKING_DIR = None
 
 
 @PrintException
-def execute_code(code):
+def execute_code(code) -> str:
 
     run = subprocess.run([sys.executable, '-c', code], capture_output=True, cwd=WORKING_DIR)
     if run.returncode != 0:

@@ -18,6 +18,8 @@ class ConfigFile(EasyCo.ConfigContainer):
 
     def __init__(self, path: Path):
         super().__init__()
+        if isinstance(path, str):
+            path = Path(path)
         self._path = path.resolve()
         if self._path.suffix == '':
             self._path = self._path.with_name(self._path.name + '.yml')
