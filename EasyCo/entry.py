@@ -3,16 +3,16 @@ import voluptuous
 
 from . import EasyCoConfig
 
-
-class ValueNotConfigured:
+class MissingType:
     pass
+MISSING = MissingType()
 
 
 class ConfigEntry:
-    def __init__(self, default_value=ValueNotConfigured, value_type=ValueNotConfigured, validator=ValueNotConfigured,
+    def __init__(self, default_factory=MISSING, value_type=MISSING, validator=MISSING,
                  required=True, description=None):
         self.value_type = value_type
-        self.value_default = default_value
+        self.value_default = default_factory
         self.validator = validator
 
         assert description is None or isinstance(description, str), type(description)
@@ -21,7 +21,7 @@ class ConfigEntry:
         self.required: bool = required
         self.description: str = description
 
-        if self.value_default is not ValueNotConfigured and self.value_type is ValueNotConfigured:
+        if self.value_default is not MISSING and self.value_type is MISSING:
             self.value_type = type(self.value_default)
 
         # ---------------------------------------------------------------
@@ -46,14 +46,14 @@ class ConfigEntry:
     def set_validator(self, name: str, data: dict) -> dict:
         key = (voluptuous.Required if self.required else voluptuous.Optional)(
             schema=name, description=self.description,
-            default=self.value_default if self.value_default is not ValueNotConfigured else voluptuous.UNDEFINED)
-        data[key] = self.value_type if self.validator is ValueNotConfigured else self.validator
+            default=self.value_default if self.value_default is not MISSING else voluptuous.UNDEFINED)
+        data[key] = self.value_type if self.validator is MISSING else self.validator
         return data
 
     def set_default(self, name: str, data: dict, cfg: EasyCoConfig) -> bool:
 
         # skip if we don't have a default value
-        if self.value_default is ValueNotConfigured:
+        if self.value_default is MISSING:
             return False
 
         # respect option to only create required keys

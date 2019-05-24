@@ -27,23 +27,23 @@ class test_ConfigEntry(unittest.TestCase):
         CFG.create_optional_keys = True
 
         ret = {}
-        ConfigEntry(required=False, default_value=5).set_default('test_int', ret, CFG)
+        ConfigEntry(required=False, default_factory=5).set_default('test_int', ret, CFG)
         self.assertDictEqual(ret, {'test_int': 5})
 
-        ConfigEntry(required=False, default_value='TestString').set_default('test_str', ret, CFG)
+        ConfigEntry(required=False, default_factory='TestString').set_default('test_str', ret, CFG)
         self.assertDictEqual(ret, {'test_int': 5, 'test_str': 'TestString'})
 
     def test_default_value_skip(self):
         CFG.create_optional_keys = False
 
         ret = {}
-        ConfigEntry(required=False, default_value='skip').set_default('key_skip', ret, CFG)
-        ConfigEntry(required=True, default_value='set').set_default('key_set', ret, CFG)
+        ConfigEntry(required=False, default_factory='skip').set_default('key_skip', ret, CFG)
+        ConfigEntry(required=True, default_factory='set').set_default('key_set', ret, CFG)
         self.assertDictEqual(ret, {'key_set' : 'set'})
 
 
     def test_default_validator(self):
-        c = ConfigEntry(required=True, default_value=5)
+        c = ConfigEntry(required=True, default_factory=5)
         validator = c.set_validator('test', {})
 
         ret = voluptuous.Schema(validator)({})
@@ -53,7 +53,7 @@ class test_ConfigEntry(unittest.TestCase):
         self.assertDictEqual(ret, {'test': 7})
 
 
-        c = ConfigEntry(required=True, default_value='asdf')
+        c = ConfigEntry(required=True, default_factory='asdf')
         validator = c.set_validator('test', {})
 
         ret = voluptuous.Schema(validator)({})
@@ -64,8 +64,8 @@ class test_ConfigEntry(unittest.TestCase):
 
     def test_description(self):
         data = ruamel.yaml.comments.CommentedMap()
-        ConfigEntry(required=True, default_value=5).set_default('key_no_comment', data, CFG)
-        ConfigEntry(required=True, default_value=5, description='Description').set_default('key_comment', data, CFG)
+        ConfigEntry(required=True, default_factory=5).set_default('key_no_comment', data, CFG)
+        ConfigEntry(required=True, default_factory=5, description='Description').set_default('key_comment', data, CFG)
 
         tmp = io.StringIO()
         ruamel.yaml.YAML().dump(data, tmp)

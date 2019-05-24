@@ -27,12 +27,12 @@ class test_configfile(unittest.TestCase):
         class asdf(ConfigContainer):
             my_int = 5
             my_float = 3.3
-            my_float_comment = ConfigEntry(default_value=5.5, description='testest')
+            my_float_comment = ConfigEntry(default_factory=5.5, description='testest')
 
         class Test(ConfigFile):
             a = asdf()
             top_level_str = 'adsf'
-            top_level_entry = ConfigEntry(default_value=5.5, description=' testest')
+            top_level_entry = ConfigEntry(default_factory=5.5, description=' testest')
 
         f = Test(TEST_DIR / 'test.yml')
         self.assertIsInstance(f.a, asdf)

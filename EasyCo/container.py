@@ -45,7 +45,7 @@ class ConfigContainer:
             # create them ourselves
             value_type = annotations.get(name, type(value))
             self.__entries[name] = ConfigEntry(
-                value_type=self.get_value_validator(name, value_type), default_value=value)
+                value_type=self.get_value_validator(name, value_type), default_factory=value)
 
         for name, value_type in annotations.items():
             # we have already processed this
