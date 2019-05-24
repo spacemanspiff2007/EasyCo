@@ -3,6 +3,7 @@ import voluptuous
 
 from . import EasyCoConfig
 
+
 class MissingType:
     def __repr__(self):
         return 'MISSING'
@@ -47,20 +48,45 @@ class ConfigEntry:
             return self.name.lower()
         return self.name
 
+    def set_type_hint(self, var_name, var_type):
+        # name can already be set through constructor
+        if not self.name:
+            self.name = var_name
+
+        # type is mandatory
+        self.type = var_type
+
+        # Validator is already set -> don't overwrite it
+        if self.validator is not MISSING:
+            return None
+
+        # we load strings
+        if self.type is pathlib.Path:
+            self.validator = str
+            return None
+
+        # propably a type-hint, support lists and dict
+        if hasattr(self.type, '__origin__') and hasattr(self.type, '__args__'):
+            origin = getattr(self.type, '__origin__')
+            args = getattr(self.type, '__args__')
+            if isinstance(origin, (list, set)):
+                self.validator = origin(args[0])
+                return None
+            if isinstance(origin, dict):
+                self.validator = {args[0] : args[1]}
+                return None
+
+        # use type as validator
+        self.validator = self.type
+        return None
+
     def set_validator(self, data: dict, cfg: EasyCoConfig) -> dict:
         assert isinstance(cfg, EasyCoConfig), type(cfg)
-
-        validator = self.validator
-        if validator is MISSING:
-            if self.type is pathlib.Path:
-                validator = str
-            else:
-                validator = self.type
 
         key = (voluptuous.Required if self.required else voluptuous.Optional)(
             schema=self.__key_get_name(cfg), description=self.description,
             default=self.default if self.default is not MISSING else voluptuous.UNDEFINED)
-        data[key] = validator
+        data[key] = self.validator
         return data
 
     def set_default(self, data: dict, cfg: EasyCoConfig) -> bool:

@@ -25,8 +25,7 @@ class ConfigContainer:
             else:
                 entry = ConfigEntry(default=default_value)
 
-            entry.name = a_name
-            entry.type = a_type
+            entry.set_type_hint(a_name, a_type)
             self.__entries[a_name] = entry
 
             if isinstance(entry.default, (list, dict, set)):
@@ -141,6 +140,3 @@ class ConfigContainer:
             self._notify()
 
         return value_changed + container_changed
-
-
-

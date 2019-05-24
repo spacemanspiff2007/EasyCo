@@ -52,66 +52,66 @@ class test_container(unittest.TestCase):
         self.cross_test(schema, ['type_hint_and_value', 'only_type_hint', 'mutable_list'])
 
 
-    def test_schema_container_name(self):
-        CFG_TEST.lower_case_keys = True
-
-        schema = {}
-        TestContainer()._update_schema(schema)
-        self.assertIn('testcontainer', schema)
-
-        CFG_TEST.lower_case_keys = False
-        TestContainer()._update_schema(schema)
-        self.assertIn('TestContainer', schema)
-        self.assertIn('testcontainer', schema)
-
-    def test_schema_container_name_double(self):
-        schema = {}
-        CFG_TEST.lower_case_keys = True
-        TestParentContainer()._update_schema(schema, insert=False)
-        self.assertIn('test_int', schema)
-        self.assertIn('testcontainer', schema)
-        self.cross_test(schema['testcontainer'], ['type_hint_and_value', 'only_type_hint', 'mutable_list'])
-
-        schema = {}
-        CFG_TEST.lower_case_keys = False
-        TestParentContainer()._update_schema(schema, insert=False)
-        self.assertIn('TEST_INT', schema)
-        self.assertIn('TestContainer', schema)
-        self.cross_test(schema['TestContainer'], ['TYPE_HINT_AND_VALUE', 'ONLY_TYPE_HINT', 'MUTABLE_LIST'])
-
-    def test_value_container(self):
-        CFG_TEST.lower_case_keys = False
-
-        data = {
-            'TYPE_HINT_AND_VALUE': 9.0,
-            'ONLY_TYPE_HINT': 7,
-            'ADDITIONAL_KEY': 7.5,
-        }
-
-        obj = TestContainer()
-        obj._set_value(data)
-        self.assertEqual(obj.TYPE_HINT_AND_VALUE, 9.0)
-        self.assertEqual(obj.ONLY_TYPE_HINT, 7)
-
-    def test_value_parent_container(self):
-        CFG_TEST.lower_case_keys = False
-
-        data = {
-            'TEST_INT': 7,
-            'TestContainer': {
-                'TYPE_HINT_AND_VALUE': 9.0,
-                'ONLY_TYPE_HINT': 7,
-                'ADDITIONAL_KEY': 7.5,
-            }
-        }
-
-        obj = TestParentContainer()
-        obj._set_value(data)
-        self.assertEqual(obj.TEST_INT, 7)
-
-        self.assertEqual(obj.TOP_CONTAINER.TYPE_HINT_AND_VALUE, 9.0)
-        self.assertEqual(obj.TOP_CONTAINER.ONLY_TYPE_HINT, 7)
-
+    # def test_schema_container_name(self):
+    #     CFG_TEST.lower_case_keys = True
+    #
+    #     schema = {}
+    #     TestContainer()._update_schema(schema)
+    #     self.assertIn('testcontainer', schema)
+    #
+    #     CFG_TEST.lower_case_keys = False
+    #     TestContainer()._update_schema(schema)
+    #     self.assertIn('TestContainer', schema)
+    #     self.assertIn('testcontainer', schema)
+    #
+    # def test_schema_container_name_double(self):
+    #     schema = {}
+    #     CFG_TEST.lower_case_keys = True
+    #     TestParentContainer()._update_schema(schema, insert=False)
+    #     self.assertIn('test_int', schema)
+    #     self.assertIn('testcontainer', schema)
+    #     self.cross_test(schema['testcontainer'], ['type_hint_and_value', 'only_type_hint', 'mutable_list'])
+    #
+    #     schema = {}
+    #     CFG_TEST.lower_case_keys = False
+    #     TestParentContainer()._update_schema(schema, insert=False)
+    #     self.assertIn('TEST_INT', schema)
+    #     self.assertIn('TestContainer', schema)
+    #     self.cross_test(schema['TestContainer'], ['TYPE_HINT_AND_VALUE', 'ONLY_TYPE_HINT', 'MUTABLE_LIST'])
+    #
+    # def test_value_container(self):
+    #     CFG_TEST.lower_case_keys = False
+    #
+    #     data = {
+    #         'TYPE_HINT_AND_VALUE': 9.0,
+    #         'ONLY_TYPE_HINT': 7,
+    #         'ADDITIONAL_KEY': 7.5,
+    #     }
+    #
+    #     obj = TestContainer()
+    #     obj._set_value(data)
+    #     self.assertEqual(obj.TYPE_HINT_AND_VALUE, 9.0)
+    #     self.assertEqual(obj.ONLY_TYPE_HINT, 7)
+    #
+    # def test_value_parent_container(self):
+    #     CFG_TEST.lower_case_keys = False
+    #
+    #     data = {
+    #         'TEST_INT': 7,
+    #         'TestContainer': {
+    #             'TYPE_HINT_AND_VALUE': 9.0,
+    #             'ONLY_TYPE_HINT': 7,
+    #             'ADDITIONAL_KEY': 7.5,
+    #         }
+    #     }
+    #
+    #     obj = TestParentContainer()
+    #     obj._set_value(data)
+    #     self.assertEqual(obj.TEST_INT, 7)
+    #
+    #     self.assertEqual(obj.TOP_CONTAINER.TYPE_HINT_AND_VALUE, 9.0)
+    #     self.assertEqual(obj.TOP_CONTAINER.ONLY_TYPE_HINT, 7)
+    #
 
 
 if __name__ == "__main__":

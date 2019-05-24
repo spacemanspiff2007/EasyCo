@@ -9,7 +9,7 @@ TEST_DIR = Path(__file__).with_name('test_files')
 class SUB_CONTAINER(ConfigContainer):
     SUB_INT: int = 5
     SUB_FLOAT: float = 5.0
-    SUB_FLOAT_COMMENT:float = 5.5
+    SUB_FLOAT_COMMENT: float = 5.5
 
 
 class Testfile(ConfigFile):

@@ -17,14 +17,14 @@ class test_ConfigEntry(unittest.TestCase):
 
     def test_required(self):
         c = ConfigEntry(required=True, key_name='test')
-        c.type = int
+        c.set_type_hint('test', int)
         validator = c.set_validator({}, CFG_LOWER)
         with self.assertRaises(voluptuous.MultipleInvalid):
             voluptuous.Schema(validator)({})
         voluptuous.Schema(validator)({'test': 5})
 
         c = ConfigEntry(required=False, key_name='test')
-        c.type = str
+        c.set_type_hint('test', str)
         validator = c.set_validator({}, CFG_LOWER)
         voluptuous.Schema(validator)({})
         voluptuous.Schema(validator)({'test': 'my_str'})
@@ -49,7 +49,8 @@ class test_ConfigEntry(unittest.TestCase):
 
 
     def test_default_validator(self):
-        c = ConfigEntry(required=True, default=5, key_name='test')
+        c = ConfigEntry(required=True, default=5)
+        c.set_type_hint('test', int)
         validator = c.set_validator({}, DEFAULT_CONFIGURATION)
 
         ret = voluptuous.Schema(validator)({})
@@ -59,7 +60,8 @@ class test_ConfigEntry(unittest.TestCase):
         self.assertDictEqual(ret, {'test': 7})
 
 
-        c = ConfigEntry(required=True, default='asdf', key_name='test')
+        c = ConfigEntry(required=True, default='asdf')
+        c.set_type_hint('test', str)
         validator = c.set_validator({}, DEFAULT_CONFIGURATION)
 
         ret = voluptuous.Schema(validator)({})
@@ -71,7 +73,8 @@ class test_ConfigEntry(unittest.TestCase):
     def test_description(self):
         data = ruamel.yaml.comments.CommentedMap()
         ConfigEntry(required=True, default=5, key_name='key_no_comment').set_default(data, CFG_LOWER)
-        ConfigEntry(required=True, default=5, key_name='key_comment', description='Description').set_default(data, CFG_LOWER)
+        ConfigEntry(required=True, default=5, key_name='key_comment',
+                    description='Description').set_default(data, CFG_LOWER)
 
         tmp = io.StringIO()
         ruamel.yaml.YAML().dump(data, tmp)
