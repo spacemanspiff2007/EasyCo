@@ -1,4 +1,5 @@
-import unittest, typing
+import typing
+import unittest
 from pathlib import Path
 
 from EasyCo import ConfigEntry, ConfigContainer, ConfigFile, EasyCoConfig
@@ -11,6 +12,7 @@ class SUB_CONTAINER(ConfigContainer):
     SUB_FLOAT: float = 5.0
     SUB_FLOAT_COMMENT: float = 5.5
     SUB_MUTABLE_LIST: typing.List[str] = ConfigEntry()
+
 
 class Testfile(ConfigFile):
     TOP_LEVEL_STR: str

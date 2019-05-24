@@ -1,7 +1,8 @@
-import io, typing
-import ruamel.yaml
+import io
+import typing
 import unittest
 
+import ruamel.yaml
 import voluptuous
 
 from EasyCo import ConfigEntry, EasyCoConfig, DEFAULT_CONFIGURATION

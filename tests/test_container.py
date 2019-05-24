@@ -9,7 +9,7 @@ CFG_TEST = EasyCoConfig()
 class TestContainer(ConfigContainer):
     TYPE_HINT_AND_VALUE: float = 0
     ONLY_TYPE_HINT: int
-    MUTABLE_LIST: typing.List[str] = ConfigEntry(default_factory=lambda:['test'])
+    MUTABLE_LIST: typing.List[str] = ConfigEntry(default_factory=lambda: ['test'])
 #    MUTABLE_DICT: typing.Dict[str, str] = ConfigEntry(default_factory=lambda: {'a':'b'})
 
     __cfg = CFG_TEST
@@ -112,8 +112,10 @@ class test_container(unittest.TestCase):
         CFG_TEST.lower_case_keys = False
 
         self.called = 0
+
         def func1():
             self.called += 1
+
         def func2():
             self.called += 1
 
