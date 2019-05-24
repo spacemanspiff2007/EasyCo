@@ -15,8 +15,7 @@ class SUB_CONTAINER(ConfigContainer):
 class Testfile(ConfigFile):
     TOP_LEVEL_STR: str
     TOP_LEVEL_ENTRY = 4.4
-    TOP_LEVEL_LIST = []
-    bla = SUB_CONTAINER
+    bla = SUB_CONTAINER()
 
     _cfg = EasyCoConfig()
 
@@ -31,7 +30,7 @@ class test_configfile(unittest.TestCase):
             my_float_comment = ConfigEntry(default_value=5.5, description='testest')
 
         class Test(ConfigFile):
-            a = asdf
+            a = asdf()
             top_level_str = 'adsf'
             top_level_entry = ConfigEntry(default_value=5.5, description=' testest')
 

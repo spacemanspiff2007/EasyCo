@@ -19,6 +19,10 @@ class ConfigContainer:
         self.__container: typing.Dict[str, ConfigContainer] = {name : obj for name, obj in inspect.getmembers(self)
                                                                if isinstance(obj, ConfigContainer)}
 
+        self.__container: typing.Dict[str, ConfigContainer] = {}
+
+        self.__find_create_config_containers()
+
         # find ConfigEntry in inherited classes
         for name, obj in inspect.getmembers(self):
             # configuration for the current container
@@ -56,6 +60,29 @@ class ConfigContainer:
         # set parent_configuration
         for container in self.__container.values():
             container._set_config(self.__cfg)
+
+    def __find_create_config_containers(self) :
+        for name, obj in inspect.getmembers(self.__class__):
+            if not isinstance(obj, ConfigContainer):
+                continue
+
+            self.__container[name] = obj
+
+    def __find_declared_variables(self) -> dict:
+        ret = {}
+        for k, v in self.__class__.__dict__.items():
+            if k.startswith('_'):
+                continue
+            if inspect.isfunction(v):
+                continue
+            if isinstance(v, (EasyCoConfig, ConfigContainer)):
+                continue
+            if inspect.isclass(v):
+                continue
+            ret[k] = v
+        return ret
+
+
 
     def get_value_validator(self, var_name: str, var_type):
         return var_type
@@ -149,3 +176,6 @@ class ConfigContainer:
             self._notify()
 
         return value_changed + container_changed
+
+
+

@@ -23,7 +23,7 @@ class TestContainer(ConfigContainer):
 
 class TestParentContainer(ConfigContainer):
     TEST_INT = 5
-    TOP_CONTAINER = TestContainer
+    TOP_CONTAINER = TestContainer()
 
     # config should be found
     __cfg = CFG_TEST
