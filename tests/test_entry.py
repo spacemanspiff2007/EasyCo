@@ -1,4 +1,4 @@
-import io
+import io, typing
 import ruamel.yaml
 import unittest
 
@@ -8,9 +8,6 @@ from EasyCo import ConfigEntry, EasyCoConfig, DEFAULT_CONFIGURATION
 
 CFG_LOWER = EasyCoConfig()
 CFG_LOWER.lower_case_keys = True
-
-CFG_UPPER = EasyCoConfig()
-CFG_UPPER.lower_case_keys = False
 
 
 class test_ConfigEntry(unittest.TestCase):
@@ -81,6 +78,24 @@ class test_ConfigEntry(unittest.TestCase):
         output = tmp.getvalue()
 
         self.assertEqual('key_no_comment: 5\nkey_comment: 5  # Description\n', output)
+
+    def test_list_validator(self):
+
+        c = ConfigEntry(required=True, default_factory=lambda: ['test'])
+        c.set_type_hint('test', typing.List[str])
+        validator = c.set_validator({}, DEFAULT_CONFIGURATION)
+
+        ret = voluptuous.Schema(validator)({})
+        self.assertDictEqual(ret, {'test': ['test']})
+
+    def test_dict_validator(self):
+
+        c = ConfigEntry(required=True, default_factory=lambda: {'test_key': 'test_val'})
+        c.set_type_hint('test', typing.Dict[str, str])
+        validator = c.set_validator({}, DEFAULT_CONFIGURATION)
+
+        ret = voluptuous.Schema(validator)({})
+        self.assertDictEqual(ret, {'test': {'test_key': 'test_val'}})
 
 
 if __name__ == "__main__":

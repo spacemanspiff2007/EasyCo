@@ -31,7 +31,7 @@ class ConfigEntry:
         self.description: str = description
 
         self.name = key_name
-        self.type = None if self.default is MISSING else type(default)
+        self.type = None
 
         # # so we can enter '5' and still get a proper int value
         # if self.value_type is float or self.value_type is int:
@@ -69,11 +69,14 @@ class ConfigEntry:
         if hasattr(self.type, '__origin__') and hasattr(self.type, '__args__'):
             origin = getattr(self.type, '__origin__')
             args = getattr(self.type, '__args__')
-            if isinstance(origin, (list, set)):
-                self.validator = origin(args[0])
+            if origin is list:
+                self.validator = [args[0]]
                 return None
-            if isinstance(origin, dict):
-                self.validator = {args[0] : args[1]}
+            if origin is set:
+                self.validator = {args[0]}
+                return None
+            if origin is dict:
+                self.validator = {args[0]: args[1]}
                 return None
 
         # use type as validator
@@ -83,9 +86,14 @@ class ConfigEntry:
     def set_validator(self, data: dict, cfg: EasyCoConfig) -> dict:
         assert isinstance(cfg, EasyCoConfig), type(cfg)
 
+        default = voluptuous.UNDEFINED
+        if self.default is not MISSING:
+            default = self.default
+        if self.default_factory is not MISSING:
+            default = self.default_factory()
+
         key = (voluptuous.Required if self.required else voluptuous.Optional)(
-            schema=self.__key_get_name(cfg), description=self.description,
-            default=self.default if self.default is not MISSING else voluptuous.UNDEFINED)
+            schema=self.__key_get_name(cfg), description=self.description, default=default)
         data[key] = self.validator
         return data
 
