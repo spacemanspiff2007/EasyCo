@@ -4,47 +4,53 @@ import unittest
 
 import voluptuous
 
-from EasyCo import ConfigEntry, EasyCoConfig
+from EasyCo import ConfigEntry, EasyCoConfig, DEFAULT_CONFIGURATION
 
-CFG = EasyCoConfig()
+CFG_LOWER = EasyCoConfig()
+CFG_LOWER.lower_case_keys = True
+
+CFG_UPPER = EasyCoConfig()
+CFG_UPPER.lower_case_keys = False
 
 
 class test_ConfigEntry(unittest.TestCase):
 
     def test_required(self):
-        c = ConfigEntry(required=True, value_type=int)
-        validator = c.set_validator('test', {})
+        c = ConfigEntry(required=True, key_name='test')
+        c.type = int
+        validator = c.set_validator({}, CFG_LOWER)
         with self.assertRaises(voluptuous.MultipleInvalid):
             voluptuous.Schema(validator)({})
         voluptuous.Schema(validator)({'test': 5})
 
-        c = ConfigEntry(required=False, value_type=str)
-        validator = c.set_validator('test', {})
+        c = ConfigEntry(required=False, key_name='test')
+        c.type = str
+        validator = c.set_validator({}, CFG_LOWER)
         voluptuous.Schema(validator)({})
         voluptuous.Schema(validator)({'test': 'my_str'})
 
     def test_default_value_create(self):
-        CFG.create_optional_keys = True
+        CFG_LOWER.create_optional_keys = True
 
         ret = {}
-        ConfigEntry(required=False, default_factory=5).set_default('test_int', ret, CFG)
+        ConfigEntry(required=False, default=5, key_name='test_int').set_default(ret, CFG_LOWER)
         self.assertDictEqual(ret, {'test_int': 5})
 
-        ConfigEntry(required=False, default_factory='TestString').set_default('test_str', ret, CFG)
+        ConfigEntry(required=False, default='TestString', key_name='test_str').set_default(ret, CFG_LOWER)
         self.assertDictEqual(ret, {'test_int': 5, 'test_str': 'TestString'})
 
     def test_default_value_skip(self):
-        CFG.create_optional_keys = False
+        CFG_LOWER.create_optional_keys = False
 
         ret = {}
-        ConfigEntry(required=False, default_factory='skip').set_default('key_skip', ret, CFG)
-        ConfigEntry(required=True, default_factory='set').set_default('key_set', ret, CFG)
+        ConfigEntry(required=False, default='skip', key_name='key_skip').set_default(ret, CFG_LOWER)
+        ConfigEntry(required=True, default='set', key_name='key_set').set_default(ret, CFG_LOWER)
         self.assertDictEqual(ret, {'key_set' : 'set'})
 
 
     def test_default_validator(self):
-        c = ConfigEntry(required=True, default_factory=5)
-        validator = c.set_validator('test', {})
+        c = ConfigEntry(required=True, default=5, key_name='test')
+        validator = c.set_validator({}, DEFAULT_CONFIGURATION)
 
         ret = voluptuous.Schema(validator)({})
         self.assertDictEqual(ret, {'test': 5})
@@ -53,8 +59,8 @@ class test_ConfigEntry(unittest.TestCase):
         self.assertDictEqual(ret, {'test': 7})
 
 
-        c = ConfigEntry(required=True, default_factory='asdf')
-        validator = c.set_validator('test', {})
+        c = ConfigEntry(required=True, default='asdf', key_name='test')
+        validator = c.set_validator({}, DEFAULT_CONFIGURATION)
 
         ret = voluptuous.Schema(validator)({})
         self.assertDictEqual(ret, {'test': 'asdf'})
@@ -64,8 +70,8 @@ class test_ConfigEntry(unittest.TestCase):
 
     def test_description(self):
         data = ruamel.yaml.comments.CommentedMap()
-        ConfigEntry(required=True, default_factory=5).set_default('key_no_comment', data, CFG)
-        ConfigEntry(required=True, default_factory=5, description='Description').set_default('key_comment', data, CFG)
+        ConfigEntry(required=True, default=5, key_name='key_no_comment').set_default(data, CFG_LOWER)
+        ConfigEntry(required=True, default=5, key_name='key_comment', description='Description').set_default(data, CFG_LOWER)
 
         tmp = io.StringIO()
         ruamel.yaml.YAML().dump(data, tmp)

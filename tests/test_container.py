@@ -1,6 +1,7 @@
+import typing
 import unittest
 
-from EasyCo import ConfigContainer, EasyCoConfig
+from EasyCo import ConfigContainer, EasyCoConfig, ConfigEntry
 
 CFG_TEST = EasyCoConfig()
 
@@ -8,8 +9,7 @@ CFG_TEST = EasyCoConfig()
 class TestContainer(ConfigContainer):
     TYPE_HINT_AND_VALUE: float = 0
     ONLY_TYPE_HINT: int
-    ONLY_VALUE = 7.5
-    MUTABLE = []
+    MUTABLE_LIST: typing.List[str] = ConfigEntry(default_factory=list)
 
     # config should be found even if it is inherited or has underscores
     __cfg = CFG_TEST
@@ -22,7 +22,7 @@ class TestContainer(ConfigContainer):
 
 
 class TestParentContainer(ConfigContainer):
-    TEST_INT = 5
+    TEST_INT: int = 5
     TOP_CONTAINER = TestContainer()
 
     # config should be found
@@ -43,13 +43,13 @@ class test_container(unittest.TestCase):
         TestContainer()._update_schema(schema, insert=False)
 
         for key in schema.keys():
-            self.assertIn(key, ['TYPE_HINT_AND_VALUE', 'ONLY_TYPE_HINT', 'ONLY_VALUE', 'MUTABLE'])
+            self.assertIn(key, ['TYPE_HINT_AND_VALUE', 'ONLY_TYPE_HINT', 'MUTABLE_LIST'])
 
         schema = {}
         CFG_TEST.lower_case_keys = True
         TestContainer()._update_schema(schema, insert=False)
 
-        self.cross_test(schema, ['type_hint_and_value', 'only_type_hint', 'only_value', 'mutable'])
+        self.cross_test(schema, ['type_hint_and_value', 'only_type_hint', 'mutable_list'])
 
 
     def test_schema_container_name(self):
@@ -70,14 +70,14 @@ class test_container(unittest.TestCase):
         TestParentContainer()._update_schema(schema, insert=False)
         self.assertIn('test_int', schema)
         self.assertIn('testcontainer', schema)
-        self.cross_test(schema['testcontainer'], ['type_hint_and_value', 'only_type_hint', 'only_value', 'mutable'])
+        self.cross_test(schema['testcontainer'], ['type_hint_and_value', 'only_type_hint', 'mutable_list'])
 
         schema = {}
         CFG_TEST.lower_case_keys = False
         TestParentContainer()._update_schema(schema, insert=False)
         self.assertIn('TEST_INT', schema)
         self.assertIn('TestContainer', schema)
-        self.cross_test(schema['TestContainer'], ['TYPE_HINT_AND_VALUE', 'ONLY_TYPE_HINT', 'ONLY_VALUE', 'MUTABLE'])
+        self.cross_test(schema['TestContainer'], ['TYPE_HINT_AND_VALUE', 'ONLY_TYPE_HINT', 'MUTABLE_LIST'])
 
     def test_value_container(self):
         CFG_TEST.lower_case_keys = False
@@ -85,14 +85,13 @@ class test_container(unittest.TestCase):
         data = {
             'TYPE_HINT_AND_VALUE': 9.0,
             'ONLY_TYPE_HINT': 7,
-            'ONLY_VALUE': 7.5,
+            'ADDITIONAL_KEY': 7.5,
         }
 
         obj = TestContainer()
         obj._set_value(data)
         self.assertEqual(obj.TYPE_HINT_AND_VALUE, 9.0)
         self.assertEqual(obj.ONLY_TYPE_HINT, 7)
-        self.assertEqual(obj.ONLY_VALUE, 7.5)
 
     def test_value_parent_container(self):
         CFG_TEST.lower_case_keys = False
@@ -102,7 +101,7 @@ class test_container(unittest.TestCase):
             'TestContainer': {
                 'TYPE_HINT_AND_VALUE': 9.0,
                 'ONLY_TYPE_HINT': 7,
-                'ONLY_VALUE': 7.5,
+                'ADDITIONAL_KEY': 7.5,
             }
         }
 
@@ -112,7 +111,6 @@ class test_container(unittest.TestCase):
 
         self.assertEqual(obj.TOP_CONTAINER.TYPE_HINT_AND_VALUE, 9.0)
         self.assertEqual(obj.TOP_CONTAINER.ONLY_TYPE_HINT, 7)
-        self.assertEqual(obj.TOP_CONTAINER.ONLY_VALUE, 7.5)
 
 
 

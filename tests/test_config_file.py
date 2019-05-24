@@ -7,14 +7,14 @@ TEST_DIR = Path(__file__).with_name('test_files')
 
 
 class SUB_CONTAINER(ConfigContainer):
-    SUB_INT = 5
+    SUB_INT: int = 5
     SUB_FLOAT: float = 5.0
-    SUB_FLOAT_COMMENT = 5.5
+    SUB_FLOAT_COMMENT:float = 5.5
 
 
 class Testfile(ConfigFile):
     TOP_LEVEL_STR: str
-    TOP_LEVEL_ENTRY = 4.4
+    TOP_LEVEL_ENTRY: float = 4.4
     bla = SUB_CONTAINER()
 
     _cfg = EasyCoConfig()
@@ -25,14 +25,14 @@ class test_configfile(unittest.TestCase):
     def test_const(self):
 
         class asdf(ConfigContainer):
-            my_int = 5
-            my_float = 3.3
-            my_float_comment = ConfigEntry(default_factory=5.5, description='testest')
+            my_int: int = 5
+            my_float: float = 3.3
+            my_float_comment: float = ConfigEntry(default=5.5, description='testest')
 
         class Test(ConfigFile):
             a = asdf()
-            top_level_str = 'adsf'
-            top_level_entry = ConfigEntry(default_factory=5.5, description=' testest')
+            top_level_str: str = 'adsf'
+            top_level_entry: float = ConfigEntry(default=5.5, description=' testest')
 
         f = Test(TEST_DIR / 'test.yml')
         self.assertIsInstance(f.a, asdf)

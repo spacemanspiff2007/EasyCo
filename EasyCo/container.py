@@ -4,85 +4,50 @@ import typing
 
 from . import ConfigEntry, EasyCoConfig, DEFAULT_CONFIGURATION
 
+from .entry import MISSING
+
 
 class ConfigContainer:
 
     def __init__(self):
         super().__init__()
-        annotations = self.__class__.__dict__.get('__annotations__', {})
-        declared = {k: v for k, v in self.__class__.__dict__.items()
-                    if not k.startswith(f'_') and not inspect.isfunction(v) and not isinstance(v, (ConfigContainer,
-                                                                                                   EasyCoConfig))}
 
-        self.__cfg: EasyCoConfig = DEFAULT_CONFIGURATION
-        self.__entries: typing.Dict[str, ConfigEntry] = {}
-        self.__container: typing.Dict[str, ConfigContainer] = {name : obj for name, obj in inspect.getmembers(self)
-                                                               if isinstance(obj, ConfigContainer)}
-
-        self.__container: typing.Dict[str, ConfigContainer] = {}
-
-        self.__find_create_config_containers()
-
-        # find ConfigEntry in inherited classes
-        for name, obj in inspect.getmembers(self):
-            # configuration for the current container
-            if isinstance(obj, EasyCoConfig):
-                self.__cfg = obj
-                continue
-
-            if not isinstance(obj, ConfigEntry):
-                continue
-            if name in declared:
-                continue
-            declared[name] = obj
-
-        for name, value in declared.items():
-            # we already have the correct values
-            if isinstance(value, ConfigEntry):
-                self.__entries[name] = value
-                continue
-
-            # create them ourselves
-            value_type = annotations.get(name, type(value))
-            self.__entries[name] = ConfigEntry(
-                value_type=self.get_value_validator(name, value_type), default_factory=value)
-
-        for name, value_type in annotations.items():
-            # we have already processed this
-            if name in declared:
-                continue
-
-            self.__entries[name] = ConfigEntry(value_type=self.get_value_validator(name, value_type), required=False)
-
-        # notify functions
+        self.__cfg = DEFAULT_CONFIGURATION
         self.__notify = []
+        self.__entries: typing.Dict[str, ConfigEntry] = {}
+        self.__containers: typing.Dict[str, ConfigContainer] = {}
 
-        # set parent_configuration
-        for container in self.__container.values():
-            container._set_config(self.__cfg)
+        annotations = self.__class__.__dict__.get('__annotations__', {})
+        for a_name, a_type in annotations.items():
+            default_value = getattr(self.__class__, a_name, MISSING)
+            if isinstance(default_value, ConfigEntry):
+                entry = default_value
+            else:
+                entry = ConfigEntry(default=default_value)
 
-    def __find_create_config_containers(self) :
-        for name, obj in inspect.getmembers(self.__class__):
-            if not isinstance(obj, ConfigContainer):
-                continue
+            entry.name = a_name
+            entry.type = a_type
+            self.__entries[a_name] = entry
 
-            self.__container[name] = obj
+            if isinstance(entry.default, (list, dict, set)):
+                raise ValueError(f'mutable default {type(entry.default)} for field '
+                                 f'{entry.name} is not allowed: use default_factory')
 
-    def __find_declared_variables(self) -> dict:
-        ret = {}
-        for k, v in self.__class__.__dict__.items():
-            if k.startswith('_'):
-                continue
-            if inspect.isfunction(v):
-                continue
-            if isinstance(v, (EasyCoConfig, ConfigContainer)):
-                continue
-            if inspect.isclass(v):
-                continue
-            ret[k] = v
-        return ret
+        # find inherited stuff
+        for name, obj in inspect.getmembers(self):
+            if isinstance(obj, ConfigContainer):
+                self.__containers[name] = obj
+            elif isinstance(obj, ConfigEntry):
+                if name not in self.__entries:
+                    self.__entries[name] = obj
+                # check that the user did not forget the type
+                if obj.type is None:
+                    raise ValueError(f'missing type hint for entry "{name}"!')
+            elif isinstance(obj, EasyCoConfig):
+                self.__cfg = obj
 
-
+        for cfg in self.__containers.values():
+            cfg._set_config(self.__cfg)
 
     def get_value_validator(self, var_name: str, var_type):
         return var_type
@@ -94,17 +59,17 @@ class ConfigContainer:
         if func not in self.__notify:
             self.__notify.append(func)
 
-    def _set_config(self, cfg):
-        assert isinstance(cfg, EasyCoConfig)
-        if self.__cfg is DEFAULT_CONFIGURATION:
-            self.__cfg = cfg
-
     def __get_container_name(self, obj) -> str:
         assert isinstance(obj, ConfigContainer), type(obj)
         key_name = obj.__class__.__name__
         if self.__cfg.lower_case_keys:
             key_name = key_name.lower()
         return key_name
+
+    def _set_config(self, cfg):
+        assert isinstance(cfg, EasyCoConfig)
+        if self.__cfg is DEFAULT_CONFIGURATION:
+            self.__cfg = cfg
 
     def __get_key_name(self, name: str) -> str:
         assert isinstance(name, str), type(name)
@@ -126,10 +91,10 @@ class ConfigContainer:
             insert = schema
 
         for name, entry in self.__entries.items():
-            entry.set_validator(self.__get_key_name(name), insert)
+            entry.set_validator(insert, self.__cfg)
 
-        for container in self.__container.values():
-            container._update_schema(insert)
+        for container in self.__containers.values():
+            container._update_schema(insert, self.__cfg)
 
         return None
 
@@ -141,10 +106,10 @@ class ConfigContainer:
 
         changed = 0
         for name, entry in self.__entries.items():
-            changed += entry.set_default(self.__get_key_name(name), insert, self.__cfg)
+            changed += entry.set_default(insert, self.__cfg)
 
-        for container in self.__container.values():
-            changed += container._update_yaml(insert)
+        for container in self.__containers.values():
+            changed += container._update_yaml(insert, self.__cfg)
 
         return changed
 
@@ -163,7 +128,7 @@ class ConfigContainer:
                 value_changed += 1
 
         container_changed = 0
-        for container in self.__container.values():
+        for container in self.__containers.values():
             try:
                 container_data = data[self.__get_container_name(container)]
             except KeyError:

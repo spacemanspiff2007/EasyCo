@@ -8,7 +8,7 @@ TEST_DIR = Path(__file__).with_name('test_files')
 
 class Folder_Container(FolderContainer):
     FolderA: str = 'TestA'
-    FolderB = 'TestB'
+    FolderB: Path = 'TestB'
 
 
 class TestFile(ConfigFile):
