@@ -10,7 +10,7 @@ class SUB_CONTAINER(ConfigContainer):
     SUB_INT: int = 5
     SUB_FLOAT: float = 5.0
     SUB_FLOAT_COMMENT: float = 5.5
-    #SUB_MUTABLE_LIST: typing.List[str] = ConfigEntry(default_factory=lambda:list())
+    SUB_MUTABLE_LIST: typing.List[str] = ConfigEntry()
 
 class Testfile(ConfigFile):
     TOP_LEVEL_STR: str
@@ -62,6 +62,7 @@ class test_configfile(unittest.TestCase):
         self.assertEqual(file.bla.SUB_INT, 7)
         self.assertEqual(file.bla.SUB_FLOAT, 7.0)
         self.assertEqual(file.bla.SUB_FLOAT_COMMENT, 7.7)
+        self.assertListEqual(file.bla.SUB_MUTABLE_LIST, ['ListEntry'])
 
     def test_load_upper(self):
 
@@ -75,6 +76,7 @@ class test_configfile(unittest.TestCase):
         self.assertEqual(file.bla.SUB_INT, 7)
         self.assertEqual(file.bla.SUB_FLOAT, 7.0)
         self.assertEqual(file.bla.SUB_FLOAT_COMMENT, 7.7)
+        self.assertListEqual(file.bla.SUB_MUTABLE_LIST, ['ListEntry'])
 
 
 

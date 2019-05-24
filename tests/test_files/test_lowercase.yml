@@ -4,3 +4,5 @@ sub_container:
   sub_int: 7
   sub_float: 7.0
   sub_float_comment: 7.7
+  sub_mutable_list:
+  - ListEntry

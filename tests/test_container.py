@@ -83,6 +83,7 @@ class test_container(unittest.TestCase):
         }
 
         obj = TestContainer()
+        self.assertEqual(obj.TYPE_HINT_AND_VALUE, 0)
         obj._set_value(data)
         self.assertEqual(obj.TYPE_HINT_AND_VALUE, 9.0)
         self.assertEqual(obj.ONLY_TYPE_HINT, 7)
@@ -105,6 +106,31 @@ class test_container(unittest.TestCase):
 
         self.assertEqual(obj.TOP_CONTAINER.TYPE_HINT_AND_VALUE, 9.0)
         self.assertEqual(obj.TOP_CONTAINER.ONLY_TYPE_HINT, 7)
+
+
+    def test_subscribe(self):
+        CFG_TEST.lower_case_keys = False
+
+        self.called = 0
+        def func1():
+            self.called += 1
+        def func2():
+            self.called += 1
+
+        data = {
+            'TYPE_HINT_AND_VALUE': 9.0,
+            'ONLY_TYPE_HINT': 7,
+            'ADDITIONAL_KEY': 7.5,
+        }
+        obj = TestContainer()
+        obj.subscribe_for_changes(func1)
+        obj.subscribe_for_changes(func2)
+
+        self.assertEqual(self.called, 0)
+        self.assertEqual(obj.TYPE_HINT_AND_VALUE, 0)
+        obj._set_value(data)
+        self.assertEqual(obj.TYPE_HINT_AND_VALUE, 9.0)
+        self.assertEqual(self.called, 2)
 
 
 
