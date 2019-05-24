@@ -5,8 +5,10 @@ Goal
 The goal of **EasyCo** is to provide an **easy** way of **Co**\ nfiguration using yaml files for Python programs.
 It can automatically create a default configuration from provided default values and will validate the provided data.
 
+
 Example
 ------------------------------
+
 
 .. execute_code::
     :header_code: Program code
@@ -22,9 +24,12 @@ Example
         ConfValueA = 5
         ConfValueB = 5.5
 
-        sub_values = MyContainer()
+        sub_values = MyContainer
 
     cfg = MyConfigFile('test')
+    # skip
+    cfg.load()
+    # skip
 
     # hide
     cfg._print_created_cfg()
