@@ -25,28 +25,3 @@ if __name__ == "__main__":
         top_level_dir=os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
     text_runner = unittest.TextTestRunner().run(testSuite)
-
-
-
-
-    from EasyCo import ConfigFile, ConfigContainer
-
-    class MyContainer(ConfigContainer):
-        SubValueA: int
-        SubValueB = 7
-
-    class MyConfigFile(ConfigFile):
-        ConfValueA = 5
-        ConfValueB = 5.5
-
-        sub_values = MyContainer()
-
-    cfg = MyConfigFile('test')
-    cfg.sub_values.SubValueB
-
-
-
-
-
-
-

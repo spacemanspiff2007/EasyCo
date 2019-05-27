@@ -18,8 +18,8 @@ Example lowercase keys
     DEFAULT_CONFIGURATION.lower_case_keys = True
 
     class MyConfigFile(ConfigFile):
-        ConfValueA = 5
-        ConfValueB = 5.5
+        ConfValueA: int = 5
+        ConfValueB: float = 5.5
 
     #hide
     MyConfigFile('test')._print_created_cfg()
@@ -36,8 +36,8 @@ This example also shows a per container configuration
     DEFAULT_CONFIGURATION.lower_case_keys = True
 
     class MyConfigFile(ConfigFile):
-        ConfValueA = 5
-        ConfValueB = 5.5
+        ConfValueA: int = 5
+        ConfValueB: float = 5.5
 
         # name of config doesn't matter and can be private so it doesn't show up in auto-complete
         __cfg = EasyCoConfig()
