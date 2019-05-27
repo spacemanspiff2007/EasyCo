@@ -53,7 +53,7 @@ class ConfigFile(EasyCo.ConfigContainer):
 
     def _print_created_cfg(self):
         cfg = ruamel.yaml.comments.CommentedMap()
-        self._update_yaml(cfg, insert=False)
+        self._update_yaml(cfg, insert_values=False)
 
         tmp = io.StringIO()
         ruamel.yaml.YAML().dump(cfg, tmp)
