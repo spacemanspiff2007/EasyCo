@@ -16,15 +16,28 @@ yaml.sort_base_mapping_type_on_output = False
 
 class ConfigFile(EasyCo.ConfigContainer):
 
-    def __init__(self, path: Path):
+    def __init__(self, path: Path = None):
         super().__init__()
+        if path is not None:
+            self.set_path(path)
+
+    def set_path(self, path):
         if isinstance(path, str):
             path = Path(path)
+        assert isinstance(path, Path), type(path)
+
         self._path = path.resolve()
         if self._path.suffix == '':
             self._path = self._path.with_name(self._path.name + '.yml')
 
-    def load(self):
+        # set default path for folder container
+        self._set_default_path(self._path.parent)
+
+    def load(self, path=None):
+        if path is not None:
+            self.set_path(path)
+        assert self._path is not None
+
         cfg = ruamel.yaml.comments.CommentedMap()
         if not self._path.parent.is_dir():
             raise FileNotFoundError(f'Configuration folder {self._path.parent} does not exist!')

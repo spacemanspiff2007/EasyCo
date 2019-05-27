@@ -1,9 +1,10 @@
 import inspect
-import ruamel.yaml
+import pathlib
 import typing
 
-from . import ConfigEntry, EasyCoConfig, DEFAULT_CONFIGURATION
+import ruamel.yaml
 
+from . import ConfigEntry, EasyCoConfig, DEFAULT_CONFIGURATION
 from .entry import MISSING
 
 
@@ -57,6 +58,11 @@ class ConfigContainer:
     def subscribe_for_changes(self, func):
         if func not in self.__notify:
             self.__notify.append(func)
+
+    def _set_default_path(self, path: pathlib.Path):
+        for name, obj in  self.__containers.items():
+            if isinstance(obj, ConfigContainer):
+                obj._set_default_path(path)
 
     def __get_container_name(self, obj) -> str:
         assert isinstance(obj, ConfigContainer), type(obj)
