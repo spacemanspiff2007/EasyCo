@@ -36,11 +36,11 @@ class ConfigFile(EasyCo.ConfigContainer):
                 cfg = ruamel.yaml.comments.CommentedMap()
 
         # add default values
-        data_changed = self._update_yaml(cfg, insert=False)
+        data_changed = self._update_yaml(cfg, insert_values=False)
 
         # validate - this also makes it a normal dict
         schema = {}
-        self._update_schema(schema, insert=False)
+        self._update_schema(schema, insert_values=False)
         schema = voluptuous.Schema(schema)
         validated_cfg = schema(cfg)
 

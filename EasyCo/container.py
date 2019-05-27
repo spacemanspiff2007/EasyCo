@@ -83,8 +83,10 @@ class ConfigContainer:
             except Exception:
                 pass
 
-    def _update_schema(self, schema, insert=True):
-        if insert:
+    def _update_schema(self, schema, insert_values=True):
+        assert isinstance(insert_values, bool)
+
+        if insert_values:
             schema[self.__get_container_name(self)] = insert = {}
         else:
             insert = schema
@@ -93,12 +95,14 @@ class ConfigContainer:
             entry.set_validator(insert, self.__cfg)
 
         for container in self.__containers.values():
-            container._update_schema(insert, self.__cfg)
+            container._update_schema(insert)
 
         return None
 
-    def _update_yaml(self, data, insert=True) -> int:
-        if insert:
+    def _update_yaml(self, data, insert_values=True) -> int:
+        assert isinstance(insert_values, bool)
+
+        if insert_values:
             insert = data.setdefault(self.__get_container_name(self), ruamel.yaml.comments.CommentedMap())
         else:
             insert = data
@@ -108,7 +112,7 @@ class ConfigContainer:
             changed += entry.set_default(insert, self.__cfg)
 
         for container in self.__containers.values():
-            changed += container._update_yaml(insert, self.__cfg)
+            changed += container._update_yaml(insert)
 
         return changed
 

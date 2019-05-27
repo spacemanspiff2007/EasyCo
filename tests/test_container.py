@@ -34,14 +34,14 @@ class test_container(unittest.TestCase):
     def test_schema_flat_keys(self):
         schema = {}
         CFG_TEST.lower_case_keys = False
-        TestContainer()._update_schema(schema, insert=False)
+        TestContainer()._update_schema(schema, insert_values=False)
 
         for key in schema.keys():
             self.assertIn(key, ['TYPE_HINT_AND_VALUE', 'ONLY_TYPE_HINT', 'MUTABLE_LIST'])
 
         schema = {}
         CFG_TEST.lower_case_keys = True
-        TestContainer()._update_schema(schema, insert=False)
+        TestContainer()._update_schema(schema, insert_values=False)
 
         self.cross_test(schema, ['type_hint_and_value', 'only_type_hint', 'mutable_list'])
 
@@ -61,14 +61,14 @@ class test_container(unittest.TestCase):
     def test_schema_container_name_double(self):
         schema = {}
         CFG_TEST.lower_case_keys = True
-        TestParentContainer()._update_schema(schema, insert=False)
+        TestParentContainer()._update_schema(schema, insert_values=False)
         self.assertIn('test_int', schema)
         self.assertIn('testcontainer', schema)
         self.cross_test(schema['testcontainer'], ['type_hint_and_value', 'only_type_hint', 'mutable_list'])
 
         schema = {}
         CFG_TEST.lower_case_keys = False
-        TestParentContainer()._update_schema(schema, insert=False)
+        TestParentContainer()._update_schema(schema, insert_values=False)
         self.assertIn('TEST_INT', schema)
         self.assertIn('TestContainer', schema)
         self.cross_test(schema['TestContainer'], ['TYPE_HINT_AND_VALUE', 'ONLY_TYPE_HINT', 'MUTABLE_LIST'])
