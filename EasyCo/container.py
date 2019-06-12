@@ -60,7 +60,7 @@ class ConfigContainer:
             self.__notify.append(func)
 
     def _set_default_path(self, path: pathlib.Path):
-        for name, obj in  self.__containers.items():
+        for name, obj in self.__containers.items():
             if isinstance(obj, ConfigContainer):
                 obj._set_default_path(path)
 
