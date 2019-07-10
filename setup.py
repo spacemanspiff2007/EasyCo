@@ -1,9 +1,12 @@
 from pathlib import Path
+
 import setuptools
 
 # Load version number
+SETUP_PY = Path(__file__)
+
 version = {}
-with open("src/EasyCo/__version__.py") as fp:
+with (SETUP_PY.with_name('src') / 'EasyCo' / '__version__.py').open() as fp:
     exec(fp.read(), version)
 assert version
 assert version['__VERSION__']
@@ -12,7 +15,7 @@ print(f'Version: {__VERSION__}')
 print('')
 
 # don't load file for tox-builds
-readme = Path(__file__).with_name('readme.md')
+readme = SETUP_PY.with_name('readme.md')
 long_description = ''
 if readme.is_file():
     with readme.open("r", encoding='utf-8') as fh:
@@ -38,7 +41,7 @@ setuptools.setup(
         'Documentation': 'https://easyco.readthedocs.io/',
         'GitHub': 'https://github.com/spacemanspiff2007/EasyCo',
     },
-    packages=setuptools.find_packages(exclude=['tests*']),
+    packages=setuptools.find_packages('src', exclude=['tests*']),
     install_requires=[
         'ruamel.yaml',
         'voluptuous',
