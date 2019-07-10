@@ -11,7 +11,7 @@ with (SETUP_PY.with_name('src') / 'EasyCo' / '__version__.py').open() as fp:
 assert version
 assert version['__VERSION__']
 __VERSION__ = version['__VERSION__']
-print(f'Version: {__VERSION__}')
+print(f'EasyCo Version: {__VERSION__}')
 print('')
 
 # don't load file for tox-builds
@@ -42,6 +42,7 @@ setuptools.setup(
         'GitHub': 'https://github.com/spacemanspiff2007/EasyCo',
     },
     packages=setuptools.find_packages('src', exclude=['tests*']),
+    package_dir={'': 'src'},
     install_requires=[
         'ruamel.yaml',
         'voluptuous',
