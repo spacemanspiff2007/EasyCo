@@ -14,7 +14,7 @@ class SUB_CONTAINER(ConfigContainer):
     SUB_MUTABLE_LIST: typing.List[str] = ConfigEntry()
 
 
-class Testfile(ConfigFile):
+class MyTestfile(ConfigFile):
     TOP_LEVEL_STR: str
     TOP_LEVEL_ENTRY: float = 4.4
     bla = SUB_CONTAINER()
@@ -54,7 +54,7 @@ class test_configfile(unittest.TestCase):
 
     def test_load_lower(self):
 
-        file = Testfile(TEST_DIR / 'test_lowercase.yml')
+        file = MyTestfile(TEST_DIR / 'test_lowercase.yml')
         file._cfg.lower_case_keys = True
         file.load()
 
@@ -68,7 +68,7 @@ class test_configfile(unittest.TestCase):
 
     def test_load_upper(self):
 
-        file = Testfile(TEST_DIR / 'test_uppercase.yml')
+        file = MyTestfile(TEST_DIR / 'test_uppercase.yml')
         file._cfg.lower_case_keys = False
         file.load()
 

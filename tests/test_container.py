@@ -6,7 +6,7 @@ from EasyCo import ConfigContainer, EasyCoConfig, ConfigEntry
 CFG_TEST = EasyCoConfig()
 
 
-class TestContainer(ConfigContainer):
+class MyContainer(ConfigContainer):
     TYPE_HINT_AND_VALUE: float = 0
     ONLY_TYPE_HINT: int
     MUTABLE_LIST: typing.List[str] = ConfigEntry(default_factory=lambda: ['test'])
@@ -15,9 +15,9 @@ class TestContainer(ConfigContainer):
     __cfg = CFG_TEST
 
 
-class TestParentContainer(ConfigContainer):
+class MyParentContainer(ConfigContainer):
     TEST_INT: int = 5
-    TOP_CONTAINER = TestContainer()
+    TOP_CONTAINER = MyContainer()
 
     # config should be found
     __cfg = CFG_TEST
@@ -34,14 +34,14 @@ class test_container(unittest.TestCase):
     def test_schema_flat_keys(self):
         schema = {}
         CFG_TEST.lower_case_keys = False
-        TestContainer()._update_schema(schema, insert_values=False)
+        MyContainer()._update_schema(schema, insert_values=False)
 
         for key in schema.keys():
             self.assertIn(key, ['TYPE_HINT_AND_VALUE', 'ONLY_TYPE_HINT', 'MUTABLE_LIST'])
 
         schema = {}
         CFG_TEST.lower_case_keys = True
-        TestContainer()._update_schema(schema, insert_values=False)
+        MyContainer()._update_schema(schema, insert_values=False)
 
         self.cross_test(schema, ['type_hint_and_value', 'only_type_hint', 'mutable_list'])
 
@@ -50,28 +50,28 @@ class test_container(unittest.TestCase):
         CFG_TEST.lower_case_keys = True
 
         schema = {}
-        TestContainer()._update_schema(schema)
-        self.assertIn('testcontainer', schema)
+        MyContainer()._update_schema(schema)
+        self.assertIn('mycontainer', schema)
 
         CFG_TEST.lower_case_keys = False
-        TestContainer()._update_schema(schema)
-        self.assertIn('TestContainer', schema)
-        self.assertIn('testcontainer', schema)
+        MyContainer()._update_schema(schema)
+        self.assertIn('MyContainer', schema)
+        self.assertIn('mycontainer', schema)
 
     def test_schema_container_name_double(self):
         schema = {}
         CFG_TEST.lower_case_keys = True
-        TestParentContainer()._update_schema(schema, insert_values=False)
+        MyParentContainer()._update_schema(schema, insert_values=False)
         self.assertIn('test_int', schema)
-        self.assertIn('testcontainer', schema)
-        self.cross_test(schema['testcontainer'], ['type_hint_and_value', 'only_type_hint', 'mutable_list'])
+        self.assertIn('mycontainer', schema)
+        self.cross_test(schema['mycontainer'], ['type_hint_and_value', 'only_type_hint', 'mutable_list'])
 
         schema = {}
         CFG_TEST.lower_case_keys = False
-        TestParentContainer()._update_schema(schema, insert_values=False)
+        MyParentContainer()._update_schema(schema, insert_values=False)
         self.assertIn('TEST_INT', schema)
-        self.assertIn('TestContainer', schema)
-        self.cross_test(schema['TestContainer'], ['TYPE_HINT_AND_VALUE', 'ONLY_TYPE_HINT', 'MUTABLE_LIST'])
+        self.assertIn('MyContainer', schema)
+        self.cross_test(schema['MyContainer'], ['TYPE_HINT_AND_VALUE', 'ONLY_TYPE_HINT', 'MUTABLE_LIST'])
 
     def test_value_container(self):
         CFG_TEST.lower_case_keys = False
@@ -82,7 +82,7 @@ class test_container(unittest.TestCase):
             'ADDITIONAL_KEY': 7.5,
         }
 
-        obj = TestContainer()
+        obj = MyContainer()
         self.assertEqual(obj.TYPE_HINT_AND_VALUE, 0)
         obj._set_value(data)
         self.assertEqual(obj.TYPE_HINT_AND_VALUE, 9.0)
@@ -93,14 +93,14 @@ class test_container(unittest.TestCase):
 
         data = {
             'TEST_INT': 7,
-            'TestContainer': {
+            'MyContainer': {
                 'TYPE_HINT_AND_VALUE': 9.0,
                 'ONLY_TYPE_HINT': 7,
                 'ADDITIONAL_KEY': 7.5,
             }
         }
 
-        obj = TestParentContainer()
+        obj = MyParentContainer()
         obj._set_value(data)
         self.assertEqual(obj.TEST_INT, 7)
 
@@ -124,7 +124,7 @@ class test_container(unittest.TestCase):
             'ONLY_TYPE_HINT': 7,
             'ADDITIONAL_KEY': 7.5,
         }
-        obj = TestContainer()
+        obj = MyContainer()
         obj.subscribe_for_changes(func1)
         obj.subscribe_for_changes(func2)
 

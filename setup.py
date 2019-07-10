@@ -3,7 +3,7 @@ import setuptools
 
 # Load version number
 version = {}
-with open("EasyCo/__version__.py") as fp:
+with open("src/EasyCo/__version__.py") as fp:
     exec(fp.read(), version)
 assert version
 assert version['__VERSION__']

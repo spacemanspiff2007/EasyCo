@@ -11,7 +11,7 @@ class Folder_Container(FolderContainer):
     FolderB: Path = 'TestB'
 
 
-class TestFile(ConfigFile):
+class MyTestFile(ConfigFile):
     folders = Folder_Container()
 
 
@@ -27,7 +27,7 @@ class test_container(unittest.TestCase):
 
 
     def test_file(self):
-        f = TestFile(TEST_DIR / 'test_folder')
+        f = MyTestFile(TEST_DIR / 'test_folder')
         self.assertEqual(f.folders.parent_folder, TEST_DIR)
         f.load()
 
