@@ -1,4 +1,6 @@
-import pathlib, typing
+import pathlib
+import typing
+
 import voluptuous
 
 from . import EasyCoConfig
@@ -13,7 +15,7 @@ MISSING = MissingType()
 
 
 class ConfigEntry:
-    def __init__(self, default=MISSING, default_factory: typing.Callable[[], typing.Any]=MISSING, validator=MISSING,
+    def __init__(self, default=MISSING, default_factory: typing.Callable[[], typing.Any] = MISSING, validator = MISSING,
                  required=True, description='', key_name=None):
 
         # can't use both
