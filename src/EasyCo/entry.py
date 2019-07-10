@@ -1,4 +1,4 @@
-import pathlib
+import pathlib, typing
 import voluptuous
 
 from . import EasyCoConfig
@@ -13,7 +13,7 @@ MISSING = MissingType()
 
 
 class ConfigEntry:
-    def __init__(self, default=MISSING, default_factory=MISSING, validator=MISSING,
+    def __init__(self, default=MISSING, default_factory: typing.Callable[[], typing.Any]=MISSING, validator=MISSING,
                  required=True, description='', key_name=None):
 
         # can't use both
@@ -21,7 +21,7 @@ class ConfigEntry:
             raise ValueError('cannot specify both default and default_factory')
 
         self.default = default
-        self.default_factory = default_factory
+        self.default_factory: typing.Callable[[], typing.Any] = default_factory
         self.validator = validator
 
         assert isinstance(description, str), type(description)
@@ -69,13 +69,14 @@ class ConfigEntry:
         if hasattr(self.type, '__origin__') and hasattr(self.type, '__args__'):
             origin = getattr(self.type, '__origin__')
             args = getattr(self.type, '__args__')
-            if origin is list:
+
+            if origin is list or origin is typing.List:
                 self.validator = [args[0]]
                 return None
-            if origin is set:
+            if origin is set or origin is typing.Set:
                 self.validator = {args[0]}
                 return None
-            if origin is dict:
+            if origin is dict or origin is typing.Dict:
                 self.validator = {args[0]: args[1]}
                 return None
 

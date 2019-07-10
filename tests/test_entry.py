@@ -86,6 +86,8 @@ class test_ConfigEntry(unittest.TestCase):
         c.set_type_hint('test', typing.List[str])
         validator = c.set_validator({}, DEFAULT_CONFIGURATION)
 
+        self.assertEqual({'test': [str]}, validator)
+
         ret = voluptuous.Schema(validator)({})
         self.assertDictEqual(ret, {'test': ['test']})
 
