@@ -53,12 +53,23 @@ class ConfigContainer:
         return var_type
 
     def set_value_from_file(self, var_name: str, new_value):
+        """Override this function to perform datatype conversions when values get loaded from the file
+
+        :param var_name: variable name
+        :param new_value: new value which was loaded from file
+        :return: Value which will be set
+        """
         return new_value
 
     def subscribe_for_changes(self, func):
+        """When a value in this container changes the passed function will be called.
+
+        :param func: function which will be called
+        """
         if func not in self.__notify:
             self.__notify.append(func)
 
+    # todo: do this in a more generic way since this is only for folder_container
     def _set_default_path(self, path: pathlib.Path):
         for name, obj in self.__containers.items():
             if isinstance(obj, ConfigContainer):

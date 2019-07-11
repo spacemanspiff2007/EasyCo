@@ -17,7 +17,7 @@ import sys
 import pathlib
 
 # required for autodoc
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath('..') + '/src')
 
 sys.path.insert(0, os.path.abspath('./_plugins'))
 
@@ -209,4 +209,4 @@ todo_include_todos = False
 
 autodoc_member_order = 'bysource'
 
-execute_code_working_dir = pathlib.Path(__file__).parent.parent
+execute_code_working_dir = pathlib.Path(__file__).parent.parent / 'src'

@@ -117,7 +117,7 @@ class test_container(unittest.TestCase):
             self.called += 1
 
         def func2():
-            self.called += 1
+            self.called += 2
 
         data = {
             'TYPE_HINT_AND_VALUE': 9.0,
@@ -132,7 +132,7 @@ class test_container(unittest.TestCase):
         self.assertEqual(obj.TYPE_HINT_AND_VALUE, 0)
         obj._set_value(data)
         self.assertEqual(obj.TYPE_HINT_AND_VALUE, 9.0)
-        self.assertEqual(self.called, 2)
+        self.assertEqual(self.called, 3)
 
 
 

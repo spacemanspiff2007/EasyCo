@@ -4,4 +4,4 @@ from .entry import ConfigEntry
 from .container import ConfigContainer
 from .config_file import ConfigFile
 
-from .folder_container import FolderContainer
+from .path_container import PathContainer

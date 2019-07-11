@@ -1,12 +1,12 @@
 import unittest
 from pathlib import Path
 
-from EasyCo import FolderContainer, ConfigFile
+from EasyCo import PathContainer, ConfigFile
 
 TEST_DIR = Path(__file__).with_name('test_files')
 
 
-class Folder_Container(FolderContainer):
+class Folder_Container(PathContainer):
     FolderA: str = 'TestA'
     FolderB: Path = 'TestB'
 

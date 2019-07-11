@@ -1,7 +1,8 @@
+import io
 from pathlib import Path
 
-import io
 import ruamel.yaml
+import typing
 import voluptuous
 
 import EasyCo
@@ -21,7 +22,12 @@ class ConfigFile(EasyCo.ConfigContainer):
         if path is not None:
             self.set_path(path)
 
-    def set_path(self, path):
+    def set_path(self, path: typing.Union[Path, str]):
+        """Set the path to the configuration file.
+        If no file extension is specified ``.yml`` will be automatically appended.
+
+        :param path: Path obj or str
+        """
         if isinstance(path, str):
             path = Path(path)
         assert isinstance(path, Path), type(path)
@@ -33,7 +39,12 @@ class ConfigFile(EasyCo.ConfigContainer):
         # set default path for folder container
         self._set_default_path(self._path.parent)
 
-    def load(self, path=None):
+    def load(self, path: Path = None):
+        """Load values from the configuration file. If the file doesn't exist it will be created.
+        Missing required config entries will also be created.
+
+        :param path: if not already set a path instance to the config file
+        """
         if path is not None:
             self.set_path(path)
         assert self._path is not None

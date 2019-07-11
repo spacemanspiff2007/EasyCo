@@ -2,6 +2,7 @@
 
 Welcome to the EasyCo documentation!
 ====================================
+Easy configuration for Python programs with yaml files
 
 .. toctree::
    :maxdepth: 2
@@ -9,13 +10,12 @@ Welcome to the EasyCo documentation!
 
    description
    configuration
+   reference
    
 
-.. Commented out
-  Indices and tables
-  ==================
+Index
+==================
   
-  * :ref:`genindex`
-  * :ref:`modindex`
-  * :ref:`search`
+  :ref:`genindex`
+
   

@@ -15,12 +15,25 @@ MISSING = MissingType()
 
 
 class ConfigEntry:
+
     def __init__(self, default=MISSING, default_factory: typing.Callable[[], typing.Any] = MISSING, validator = MISSING,
                  required=True, description='', key_name=None):
+        """asdf
+
+        :param default: Default value for this entry
+        :param default_factory: Factory function which creates the default value, use for list, dict, etc.
+        :param validator: validator which validates the loaded values
+        :param required: is this entry required
+        :param description: description of this entry which will also be added to the config file as a comment
+        :param key_name: key name in the config file
+        """
 
         # can't use both
         if default is not MISSING and default_factory is not MISSING:
             raise ValueError('cannot specify both default and default_factory')
+
+        if default is not MISSING and not isinstance(default, (str, int, float)):
+            raise ValueError('use parameter default_factory for mutable types')
 
         self.default = default
         self.default_factory: typing.Callable[[], typing.Any] = default_factory

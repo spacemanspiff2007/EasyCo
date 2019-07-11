@@ -2,7 +2,9 @@ from pathlib import Path
 from . import ConfigContainer
 
 
-class FolderContainer(ConfigContainer):
+class PathContainer(ConfigContainer):
+    """Container which converts all values with type ``str`` to ``Path`` objects.
+    Relative paths will be resolved in relation to the folder where the config file is."""
     def __init__(self):
         self.parent_folder: Path = None
         super().__init__()
@@ -11,6 +13,7 @@ class FolderContainer(ConfigContainer):
         return super().get_value_validator(var_name, var_type)
 
     def set_value_from_file(self, var_name: str, new_value):
+        """"""  # Empty docstring otherwise autodoc shows the docstring from the base class
         if not isinstance(new_value, str):
             return new_value
 
