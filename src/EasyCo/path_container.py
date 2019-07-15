@@ -6,8 +6,8 @@ class PathContainer(ConfigContainer):
     """Container which converts all values with type ``str`` to ``Path`` objects.
     Relative paths will be resolved in relation to the folder where the config file is."""
     def __init__(self):
-        self.parent_folder: Path = None
         super().__init__()
+        self.parent_folder: Path = None
 
     def get_value_validator(self, var_name: str, var_type):
         return super().get_value_validator(var_name, var_type)
@@ -25,4 +25,3 @@ class PathContainer(ConfigContainer):
     def _set_default_path(self, path: Path):
         if self.parent_folder is None:
             self.parent_folder = path
-        super()._set_default_path(path)

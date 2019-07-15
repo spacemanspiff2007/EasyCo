@@ -28,7 +28,7 @@ class test_container(unittest.TestCase):
 
     def test_file(self):
         f = MyTestFile(TEST_DIR / 'test_folder')
-        self.assertEqual(f.folders.parent_folder, TEST_DIR)
+        assert f.folders.parent_folder == TEST_DIR
         f.load()
 
         self.assertIsInstance(f.folders.FolderA, Path)

@@ -36,8 +36,8 @@ class ConfigFile(EasyCo.ConfigContainer):
         if self._path.suffix == '':
             self._path = self._path.with_name(self._path.name + '.yml')
 
-        # set default path for folder container
-        self._set_default_path(self._path.parent)
+        # set default path for all file containers
+        self._call_container_funcs('_set_default_path', self._path.parent)
 
     def load(self, path: Path = None):
         """Load values from the configuration file. If the file doesn't exist it will be created.

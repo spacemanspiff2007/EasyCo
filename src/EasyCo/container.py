@@ -69,11 +69,18 @@ class ConfigContainer:
         if func not in self.__notify:
             self.__notify.append(func)
 
-    # todo: do this in a more generic way since this is only for folder_container
-    def _set_default_path(self, path: pathlib.Path):
+    def _call_container_funcs(self, func_name: str, *args, **kwargs):
+
         for name, obj in self.__containers.items():
-            if isinstance(obj, ConfigContainer):
-                obj._set_default_path(path)
+            assert isinstance(obj, ConfigContainer)
+
+            # call child funcs before we set the value
+            obj._call_container_funcs(func_name, *args, **kwargs)
+
+        # call function if it exists
+        func = getattr(self, func_name, None)
+        if func is not None:
+            func(*args, **kwargs)
 
     def __get_container_name(self, obj) -> str:
         assert isinstance(obj, ConfigContainer), type(obj)
