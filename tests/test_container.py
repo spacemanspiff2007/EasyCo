@@ -1,7 +1,8 @@
 import typing
 import unittest
 
-from EasyCo import ConfigContainer, EasyCoConfig, ConfigEntry
+import EasyCo
+from EasyCo import ConfigContainer, EasyCoConfig, ConfigEntry, SKIP
 
 CFG_TEST = EasyCoConfig()
 
@@ -23,6 +24,11 @@ class MyParentContainer(ConfigContainer):
     __cfg = CFG_TEST
 
 
+class SkipContainer(ConfigContainer):
+    TEST: int = 5
+    TEST_SKIP: str = SKIP
+
+
 class test_container(unittest.TestCase):
 
     def cross_test(self, obj, obj2):
@@ -30,6 +36,29 @@ class test_container(unittest.TestCase):
             self.assertIn(key, obj2)
         for key in obj2:
             self.assertIn(key, obj)
+
+    def test_skip(self):
+        schema = {}
+        EasyCo.DEFAULT_CONFIGURATION.lower_case_keys = False
+        container = SkipContainer()
+        container._update_schema(schema, insert_values=False)
+
+        assert 'TEST' in schema
+        assert 'TEST_SKIP' not in schema
+
+        data = {
+            'TEST': 7,
+            'TEST_SKIP': 'asdf',
+        }
+
+        container._set_value(data)
+        assert container.TEST == 7
+        assert container.TEST_SKIP is SKIP
+
+        container.TEST_SKIP = 'öööö'
+        container._set_value(data)
+        assert container.TEST == 7
+        assert container.TEST_SKIP == 'öööö'
 
     def test_schema_flat_keys(self):
         schema = {}

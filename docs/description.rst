@@ -82,3 +82,21 @@ Example ConfigEntry
     cfg._print_created_cfg()
     # hide
 
+
+Skipping Values
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Use the ``SKIP`` value to define variables but prevent them from being processed.
+You can then set them in :class:`~EasyCo.ConfigContainer.on_all_values_set` or whenever you like
+
+Example::
+
+    from EasyCo import ConfigContainer, ConfigEntry, SKIP
+
+    class MyContainer(ConfigContainer):
+        ValueA: int = 5      # this one will be loaded from the file
+        ValueB: int = SKIP   # this one will be ignored
+
+        # override this function, it will be called when all values have been set
+        def on_all_values_set(self):
+            self.ValueB = self.ValueA + 5
+

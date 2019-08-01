@@ -1,11 +1,10 @@
 import inspect
-import pathlib
 import typing
 
 import ruamel.yaml
 
 from . import ConfigEntry, EasyCoConfig, DEFAULT_CONFIGURATION
-from .entry import MISSING
+from .entry import MISSING, SKIP
 
 
 class ConfigContainer:
@@ -21,6 +20,11 @@ class ConfigContainer:
         annotations = self.__class__.__dict__.get('__annotations__', {})
         for a_name, a_type in annotations.items():
             default_value = getattr(self.__class__, a_name, MISSING)
+
+            # Make it possible to skip values
+            if default_value is SKIP:
+                continue
+
             if isinstance(default_value, ConfigEntry):
                 entry = default_value
             else:
@@ -49,10 +53,7 @@ class ConfigContainer:
         for cfg in self.__containers.values():
             cfg._set_config(self.__cfg)
 
-    def get_value_validator(self, var_name: str, var_type):
-        return var_type
-
-    def set_value_from_file(self, var_name: str, new_value):
+    def on_set_value(self, var_name: str, new_value):
         """Override this function to perform datatype conversions when values get loaded from the file
 
         :param var_name: variable name
@@ -60,6 +61,12 @@ class ConfigContainer:
         :return: Value which will be set
         """
         return new_value
+
+    def on_all_values_set(self):
+        """Override this function. It'll be called when all values from the file have been correctly set.
+        Use it e.g. to calculate and set additional variables.
+        """
+        return None
 
     def subscribe_for_changes(self, func):
         """When a value in this container changes the passed function will be called.
@@ -141,6 +148,8 @@ class ConfigContainer:
         return changed
 
     def _set_value(self, data) -> int:
+
+        # process values in container
         value_changed = 0
         for name, obj in self.__entries.items():
             try:
@@ -148,12 +157,13 @@ class ConfigContainer:
             except KeyError:
                 continue
 
-            value_new = self.set_value_from_file(name, value_new)
+            value_new = self.on_set_value(name, value_new)
             value_cur = getattr(self, name, None)
             if value_cur != value_new:
                 setattr(self, name, value_new)
                 value_changed += 1
 
+        # Process all subcontainers
         container_changed = 0
         for container in self.__containers.values():
             try:
@@ -162,6 +172,9 @@ class ConfigContainer:
                 continue
 
             container_changed += container._set_value(container_data)
+
+        # we have set all values in this container and subcontainer
+        self.on_all_values_set()
 
         # notify all subscribers that a value has changed
         if value_changed or container_changed:

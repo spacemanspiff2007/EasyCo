@@ -9,10 +9,7 @@ class PathContainer(ConfigContainer):
         super().__init__()
         self.parent_folder: Path = None
 
-    def get_value_validator(self, var_name: str, var_type):
-        return super().get_value_validator(var_name, var_type)
-
-    def set_value_from_file(self, var_name: str, new_value):
+    def on_set_value(self, var_name: str, new_value):
         """"""  # Empty docstring otherwise autodoc shows the docstring from the base class
         if not isinstance(new_value, str):
             return new_value

@@ -1,6 +1,7 @@
 import unittest
 from pathlib import Path
 
+import EasyCo
 from EasyCo import PathContainer, ConfigFile
 
 TEST_DIR = Path(__file__).with_name('test_files')
@@ -18,6 +19,8 @@ class MyTestFile(ConfigFile):
 class test_container(unittest.TestCase):
 
     def test_folder(self):
+        EasyCo.DEFAULT_CONFIGURATION.lower_case_keys = True
+
         f = Folder_Container()
         f.parent_folder = TEST_DIR
         cfg = {'foldera': 'TestFolderA', 'folderb': 'TestFolderA'}
@@ -27,6 +30,8 @@ class test_container(unittest.TestCase):
 
 
     def test_file(self):
+        EasyCo.DEFAULT_CONFIGURATION.lower_case_keys = True
+
         f = MyTestFile(TEST_DIR / 'test_folder')
         assert f.folders.parent_folder == TEST_DIR
         f.load()

@@ -14,6 +14,14 @@ class MissingType:
 MISSING = MissingType()
 
 
+class SkipVariableType:
+    def __repr__(self):
+        return 'Skipped'
+
+
+SKIP = SkipVariableType()
+
+
 class ConfigEntry:
 
     def __init__(self, default=MISSING, default_factory: typing.Callable[[], typing.Any] = MISSING, validator = MISSING,
