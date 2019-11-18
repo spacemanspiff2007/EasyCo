@@ -142,9 +142,11 @@ class ConfigEntry:
         if name in data:
             return False
 
-
-        # set default
-        data[name] = self.default if self.default is not MISSING else self.default_factory()
+        # set default value for entry
+        if self.default is not MISSING:
+            data[name] = str(self.default) if isinstance(self.default, Path) else self.default
+        if self.default_factory is not MISSING:
+            data[name] = self.default_factory()
 
         # add description as yaml comment, only set comment if there is none
         if self.description:

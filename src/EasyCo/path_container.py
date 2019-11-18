@@ -11,7 +11,7 @@ class PathContainer(ConfigContainer):
 
     def on_set_value(self, var_name: str, new_value):
         """"""  # Empty docstring otherwise autodoc shows the docstring from the base class
-        if not isinstance(new_value, str):
+        if not isinstance(new_value, (str, Path)):
             return new_value
 
         path = Path(new_value)
