@@ -1,5 +1,6 @@
 import io
 import typing
+from pathlib import Path
 
 import pytest
 import ruamel.yaml
@@ -102,3 +103,14 @@ def test_dict_validator():
 
     ret = voluptuous.Schema(validator)({})
     assert ret == {'test': {'test_key': 'test_val'}}
+
+
+def test_path_objects():
+
+    c = ConfigEntry(required=True, default=Path('asdf'))
+    c.set_type_hint('test', Path)
+    validator = c.set_validator({}, DEFAULT_CONFIGURATION)
+
+    # yaml doesnt provide path -> convert to str
+    ret = voluptuous.Schema(validator)({'test': '/my/path'})
+    assert ret == {'test': Path('/my/path')}
