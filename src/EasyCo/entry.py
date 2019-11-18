@@ -1,9 +1,15 @@
-import pathlib
+from pathlib import Path
 import typing
 
 import voluptuous
 
 from . import EasyCoConfig
+
+
+def convert_to_path(str_obj) -> Path:
+    if not isinstance(str_obj, str):
+        raise voluptuous.Invalid(f'Input for Path must be str not {type(str_obj)}')
+    return Path(str_obj)
 
 
 class MissingType:
@@ -25,7 +31,7 @@ SKIP = SkipVariableType()
 class ConfigEntry:
 
     def __init__(self, default=MISSING, default_factory: typing.Callable[[], typing.Any] = MISSING, validator = MISSING,
-                 required=True, description='', key_name=None):
+                 required: bool = True, description: str = '', key_name=None):
         """asdf
 
         :param default: Default value for this entry
@@ -35,20 +41,19 @@ class ConfigEntry:
         :param description: description of this entry which will also be added to the config file as a comment
         :param key_name: key name in the config file
         """
+        assert isinstance(description, str), type(description)
+        assert isinstance(required, bool), type(required)
 
         # can't use both
         if default is not MISSING and default_factory is not MISSING:
             raise ValueError('cannot specify both default and default_factory')
 
-        if default is not MISSING and not isinstance(default, (str, int, float)):
+        if default is not MISSING and not isinstance(default, (bool, str, int, float, Path)):
             raise ValueError('use parameter default_factory for mutable types')
 
         self.default = default
         self.default_factory: typing.Callable[[], typing.Any] = default_factory
         self.validator = validator
-
-        assert isinstance(description, str), type(description)
-        assert isinstance(required, bool), type(required)
 
         self.required: bool = required
         self.description: str = description
@@ -83,9 +88,9 @@ class ConfigEntry:
         if self.validator is not MISSING:
             return None
 
-        # we load strings
-        if self.type is pathlib.Path:
-            self.validator = str
+        # we load strings instead of Path objects
+        if self.type is Path:
+            self.validator = convert_to_path
             return None
 
         # propably a type-hint, support lists and dict
@@ -137,9 +142,11 @@ class ConfigEntry:
         if name in data:
             return False
 
-
-        # set default
-        data[name] = self.default if self.default is not MISSING else self.default_factory()
+        # set default value for entry
+        if self.default is not MISSING:
+            data[name] = str(self.default) if isinstance(self.default, Path) else self.default
+        if self.default_factory is not MISSING:
+            data[name] = self.default_factory()
 
         # add description as yaml comment, only set comment if there is none
         if self.description:

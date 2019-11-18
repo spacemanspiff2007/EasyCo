@@ -1,11 +1,12 @@
 from pathlib import Path
 
 import setuptools
+import typing
 
 # Load version number
 SETUP_PY = Path(__file__)
 
-version = {}
+version: typing.Dict[str, str] = {}
 with (SETUP_PY.with_name('src') / 'EasyCo' / '__version__.py').open() as fp:
     exec(fp.read(), version)
 assert version

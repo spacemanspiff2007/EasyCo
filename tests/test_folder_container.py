@@ -39,8 +39,8 @@ class test_container(unittest.TestCase):
         self.assertIsInstance(f.folders.FolderA, Path)
         self.assertIsInstance(f.folders.FolderB, Path)
 
-        self.assertEqual(TEST_DIR / 'FolderA', f.folders.FolderA)
-        self.assertEqual(TEST_DIR / 'FolderB', f.folders.FolderB)
+        assert TEST_DIR / 'FolderA' == f.folders.FolderA
+        assert TEST_DIR / 'FolderB' == f.folders.FolderB
 
 
 if __name__ == "__main__":
