@@ -1,8 +1,9 @@
+import io
 import typing
 import unittest
 from pathlib import Path
 
-from EasyCo import ConfigEntry, ConfigContainer, ConfigFile, EasyCoConfig
+from EasyCo import ConfigContainer, ConfigEntry, ConfigFile, EasyCoConfig
 
 TEST_DIR = Path(__file__).with_name('test_files')
 
@@ -80,6 +81,17 @@ class test_configfile(unittest.TestCase):
         self.assertEqual(file.bla.SUB_FLOAT_COMMENT, 7.7)
         self.assertListEqual(file.bla.SUB_MUTABLE_LIST, ['ListEntry'])
 
+    def test_string_io(self):
+        class ASDF(ConfigFile):
+            TOP_LEVEL_STR: str = 'asdf'
+            TOP_LEVEL_ENTRY: float = 4.4
+            KEY_NAME: int = ConfigEntry(default=123, key_name='NAME')
+
+        f = io.StringIO('name: 456')
+        file = ASDF()
+        file.load(f)
+
+        print(f.getvalue())
 
 
 if __name__ == "__main__":

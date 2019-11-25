@@ -1,5 +1,6 @@
 import unittest
 from pathlib import Path
+from voluptuous import Schema
 
 import EasyCo
 from EasyCo import PathContainer, ConfigFile
@@ -8,7 +9,7 @@ TEST_DIR = Path(__file__).with_name('test_files')
 
 
 class Folder_Container(PathContainer):
-    FolderA: str = 'TestA'
+    FolderA: Path = 'TestA'
     FolderB: Path = 'TestB'
 
 
@@ -24,9 +25,14 @@ class test_container(unittest.TestCase):
         f = Folder_Container()
         f.parent_folder = TEST_DIR
         cfg = {'foldera': 'TestFolderA', 'folderb': 'TestFolderA'}
+        s = {}
+        f._update_schema(s, insert_values=False)
+        cfg = Schema(s)(cfg)
         f._set_value(cfg)
         self.assertIsInstance(f.FolderA, Path)
         self.assertIsInstance(f.FolderB, Path)
+        assert TEST_DIR / 'TestFolderA' == f.FolderA
+        assert TEST_DIR / 'TestFolderA' == f.FolderB
 
 
     def test_file(self):

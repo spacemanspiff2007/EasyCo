@@ -122,7 +122,7 @@ class ConfigContainer:
         else:
             insert = schema
 
-        for name, entry in self.__entries.items():
+        for entry in self.__entries.values():
             entry.set_validator(insert, self.__cfg)
 
         for container in self.__containers.values():
