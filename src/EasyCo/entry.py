@@ -58,7 +58,7 @@ class ConfigEntry:
         self.required: bool = required
         self.description: str = description
 
-        self.name = key_name
+        self.name: typing.Optional[str] = key_name
         self.type = None
 
         # # so we can enter '5' and still get a proper int value
@@ -71,14 +71,14 @@ class ConfigEntry:
             ret += f'{k}: {v}, '
         return ret[:-2] + ' >'
 
-    def __key_get_name(self, cfg: EasyCoConfig):
+    def get_key_name(self, cfg: EasyCoConfig):
         if cfg.lower_case_keys:
             return self.name.lower()
         return self.name
 
     def set_type_hint(self, var_name, var_type):
         # name can already be set through constructor
-        if not self.name:
+        if self.name is not None:
             self.name = var_name
 
         # type is mandatory
@@ -122,7 +122,7 @@ class ConfigEntry:
             default = self.default_factory()
 
         key = (voluptuous.Required if self.required else voluptuous.Optional)(
-            schema=self.__key_get_name(cfg), description=self.description, default=default)
+            schema=self.get_key_name(cfg), description=self.description, default=default)
         data[key] = self.validator
         return data
 
@@ -138,7 +138,7 @@ class ConfigEntry:
             return False
 
         # value is already there -> do nothing
-        name = self.__key_get_name(cfg)
+        name = self.get_key_name(cfg)
         if name in data:
             return False
 

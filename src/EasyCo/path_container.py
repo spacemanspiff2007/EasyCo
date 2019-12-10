@@ -11,12 +11,13 @@ class PathContainer(ConfigContainer):
 
     def on_set_value(self, var_name: str, new_value):
         """"""  # Empty docstring otherwise autodoc shows the docstring from the base class
-        if not isinstance(new_value, Path):
+        if not isinstance(new_value, (str, Path)):
             return new_value
 
-        if not new_value.is_absolute():
-            new_value = self.parent_folder / new_value
-        return new_value.resolve()
+        path = Path(new_value)
+        if not path.is_absolute():
+            path = self.parent_folder / path
+        return path.resolve()
 
     def _set_default_path(self, path: Path):
         if self.parent_folder is None:

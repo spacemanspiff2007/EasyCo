@@ -122,7 +122,7 @@ class ConfigContainer:
         else:
             insert = schema
 
-        for entry in self.__entries.values():
+        for name, entry in self.__entries.items():
             entry.set_validator(insert, self.__cfg)
 
         for container in self.__containers.values():
@@ -153,7 +153,7 @@ class ConfigContainer:
         value_changed = 0
         for name, obj in self.__entries.items():
             try:
-                value_new = data[self.__get_key_name(name)]
+                value_new = data[obj.get_key_name(self.__cfg)]
             except KeyError:
                 continue
 

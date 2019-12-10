@@ -1,7 +1,8 @@
-import typing
+import io
 from pathlib import Path
 
 import ruamel.yaml
+import typing
 import voluptuous
 
 import EasyCo
@@ -38,31 +39,25 @@ class ConfigFile(EasyCo.ConfigContainer):
         # set default path for all file containers
         self._call_container_funcs('_set_default_path', self._path.parent)
 
-    def load(self, path_or_stream: typing.Union[Path, typing.TextIO] = None) -> 'ConfigFile':
+    def load(self, path: Path = None):
         """Load values from the configuration file. If the file doesn't exist it will be created.
         Missing required config entries will also be created.
 
-        :param path_or_stream: if not already set a path instance to the config file or
-                               a file like obj (opened in text mode 'rw')
+        :param path: if not already set a path instance to the config file
         """
+        if path is not None:
+            self.set_path(path)
+        assert self._path is not None
+
         cfg = ruamel.yaml.comments.CommentedMap()
+        if not self._path.parent.is_dir():
+            raise FileNotFoundError(f'Configuration folder {self._path.parent} does not exist!')
 
-        if isinstance(path_or_stream, Path) or path_or_stream is None:
-            if path_or_stream is not None:
-                self.set_path(path_or_stream)
-            try:
-                with self._path.open('r', encoding='utf-8') as file:
-                    cfg = yaml.load(file)
-            except FileNotFoundError:
-                pass
-        else:
-            # load from file obj
-            cfg = yaml.load(path_or_stream)
-
-        # If the file is empty we get None instead of the Commented Map
-        if cfg is None:
-            cfg = ruamel.yaml.comments.CommentedMap()
-
+        if self._path.is_file():
+            with self._path.open('r', encoding='utf-8') as file:
+                cfg = yaml.load(file)
+            if cfg is None:
+                cfg = ruamel.yaml.comments.CommentedMap()
 
         # add default values
         data_changed = self._update_yaml(cfg, insert_values=False)
@@ -75,15 +70,16 @@ class ConfigFile(EasyCo.ConfigContainer):
 
         # update optional keys if we have them and write back to disk
         if data_changed:
-            # Check if we can create the file
-            if isinstance(path_or_stream, Path) or path_or_stream is None:
-                if not self._path.parent.is_dir():
-                    raise FileNotFoundError(f'Specified configuration folder {self._path.parent} does not exist!')
-                with self._path.open('w', encoding='utf-8') as file:
-                    yaml.dump(cfg, file)
-            else:
-                path_or_stream.seek(0)
-                yaml.dump(cfg, path_or_stream)
+            with self._path.open('w', encoding='utf-8') as file:
+                yaml.dump(cfg, file)
 
         self._set_value(validated_cfg)
-        return self
+
+    def _print_created_cfg(self):
+        cfg = ruamel.yaml.comments.CommentedMap()
+        self._update_yaml(cfg, insert_values=False)
+
+        tmp = io.StringIO()
+        ruamel.yaml.YAML().dump(cfg, tmp)
+        output = tmp.getvalue()
+        print(output)
