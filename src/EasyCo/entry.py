@@ -31,7 +31,7 @@ SKIP = SkipVariableType()
 class ConfigEntry:
 
     def __init__(self, default=MISSING, default_factory: typing.Callable[[], typing.Any] = MISSING, validator = MISSING,
-                 required: bool = True, description: str = '', key_name=None):
+                 required: bool = True, description: str = '', key_name: typing.Optional[str] = None):
         """asdf
 
         :param default: Default value for this entry
@@ -78,7 +78,7 @@ class ConfigEntry:
 
     def set_type_hint(self, var_name, var_type):
         # name can already be set through constructor
-        if self.name is not None:
+        if self.name is None:
             self.name = var_name
 
         # type is mandatory
