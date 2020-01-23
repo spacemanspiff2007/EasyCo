@@ -22,11 +22,9 @@ Example lowercase keys
         ConfValueA: int = 5
         ConfValueB: float = 5.5
 
+    cfg = MyConfigFile()
     #hide
-    out = io.StringIO()
-    file = MyConfigFile()
-    file.load(out)
-    print(out.getvalue())
+    cfg._print_created_cfg()
     #hide
 
 
@@ -48,9 +46,7 @@ This example also shows a per container configuration
         __cfg = EasyCoConfig()
         __cfg.lower_case_keys = False
 
+    cfg = MyConfigFile()
     #hide
-    out = io.StringIO()
-    file = MyConfigFile()
-    file.load(out)
-    print(out.getvalue())
+    cfg._print_created_cfg()
     #hide
