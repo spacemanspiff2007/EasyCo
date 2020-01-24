@@ -9,9 +9,10 @@ from .entry import MISSING, SKIP
 
 class ConfigContainer:
 
-    def __init__(self):
+    def __init__(self, key_name: typing.Optional[str] = None):
         super().__init__()
 
+        self.__container_name: typing.Optional[str] = key_name
         self.__cfg = DEFAULT_CONFIGURATION
         self.__notify = []
         self.__entries: typing.Dict[str, ConfigEntry] = {}
@@ -91,7 +92,7 @@ class ConfigContainer:
 
     def __get_container_name(self, obj) -> str:
         assert isinstance(obj, ConfigContainer), type(obj)
-        key_name = obj.__class__.__name__
+        key_name = obj.__class__.__name__ if self.__container_name is None else self.__container_name
         if self.__cfg.lower_case_keys:
             key_name = key_name.lower()
         return key_name

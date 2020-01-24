@@ -32,7 +32,7 @@ class ConfigEntry:
 
     def __init__(self, default=MISSING, default_factory: typing.Callable[[], typing.Any] = MISSING, validator = MISSING,
                  required: bool = True, description: str = '', key_name: typing.Optional[str] = None):
-        """asdf
+        """ConfigEntry
 
         :param default: Default value for this entry
         :param default_factory: Factory function which creates the default value, use for list, dict, etc.

@@ -163,6 +163,25 @@ class test_container(unittest.TestCase):
         self.assertEqual(obj.TYPE_HINT_AND_VALUE, 9.0)
         self.assertEqual(self.called, 3)
 
+    def test_container_name(self):
+        class TestContainer(ConfigContainer):
+            var1: float = 0
+            var2: int
+
+            cfg = EasyCoConfig()
+
+        schema = {}
+        c = TestContainer(key_name='New Name')
+        c.cfg.lower_case_keys = False
+        c._update_schema(schema)
+        assert 'New Name' in schema
+
+        schema = {}
+        c = TestContainer(key_name='New Name')
+        c.cfg.lower_case_keys = True
+        c._update_schema(schema)
+        assert 'new name' in schema
+
 
 
 if __name__ == "__main__":
