@@ -74,6 +74,6 @@ class ConfigFile(EasyCo.ConfigContainer):
         self._update_yaml(cfg, insert_values=False)
 
         tmp = io.StringIO()
-        yaml.YAML().dump(cfg, tmp)
+        yaml.dump(cfg, tmp)
         output = tmp.getvalue()
         print(output)
