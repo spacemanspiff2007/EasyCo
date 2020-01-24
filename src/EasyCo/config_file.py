@@ -1,18 +1,12 @@
 import io
+import typing
 from pathlib import Path
 
 import ruamel.yaml
-import typing
 import voluptuous
 
 import EasyCo
-
-yaml = ruamel.yaml.YAML(typ='rt')
-yaml.default_flow_style = False
-yaml.default_style = False
-yaml.width = 1000000
-yaml.allow_unicode = True
-yaml.sort_base_mapping_type_on_output = False
+from .yaml import yaml_rt as yaml
 
 
 class ConfigFile(EasyCo.ConfigContainer):
@@ -80,6 +74,6 @@ class ConfigFile(EasyCo.ConfigContainer):
         self._update_yaml(cfg, insert_values=False)
 
         tmp = io.StringIO()
-        ruamel.yaml.YAML().dump(cfg, tmp)
+        yaml.YAML().dump(cfg, tmp)
         output = tmp.getvalue()
         print(output)

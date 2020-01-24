@@ -47,7 +47,6 @@ setuptools.setup(
     install_requires=[
         'ruamel.yaml',
         'voluptuous',
-        'watchdog',
     ],
     classifiers=[
         "Development Status :: 4 - Beta",
