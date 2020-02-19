@@ -3,8 +3,9 @@
 Welcome to the EasyCo documentation!
 ====================================
 Easy configuration for Python programs with yaml files!
+
 EasyCo can automatically create a default configuration from provided default values and will validate the provided data.
-It also provides auto complete in the IDE:
+It also provides auto complete in the IDE!
 
 .. image:: /gifs/example.gif
 

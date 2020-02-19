@@ -14,7 +14,9 @@ class PathContainer(ConfigContainer):
         if not isinstance(new_value, (str, Path)):
             return new_value
 
-        path = Path(new_value)
+        # Make path from str
+        path = Path(new_value) if isinstance(new_value, str) else new_value
+
         if not path.is_absolute():
             path = self.parent_folder / path
         return path.resolve()
