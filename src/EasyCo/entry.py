@@ -1,7 +1,7 @@
 from pathlib import Path
 import typing
 
-import voluptuous
+import voluptuous   # type: ignore
 
 from . import EasyCoConfig
 

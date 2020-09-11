@@ -1,8 +1,8 @@
 import typing
 from pathlib import Path
 
-import ruamel.yaml
-import voluptuous
+import ruamel.yaml  # type: ignore
+import voluptuous   # type: ignore
 
 yaml_rt = ruamel.yaml.YAML(typ='rt')
 yaml_safe = ruamel.yaml.YAML(typ='safe')

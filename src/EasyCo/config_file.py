@@ -2,8 +2,8 @@ import io
 import typing
 from pathlib import Path
 
-import ruamel.yaml
-import voluptuous
+import ruamel.yaml      # type: ignore
+import voluptuous       # type: ignore
 
 import EasyCo
 from .yaml import yaml_rt as yaml

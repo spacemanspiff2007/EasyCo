@@ -1,7 +1,7 @@
 import inspect
 import typing
 
-import ruamel.yaml
+import ruamel.yaml  # type: ignore
 
 from . import ConfigEntry, EasyCoConfig, DEFAULT_CONFIGURATION
 from .entry import MISSING, SKIP
