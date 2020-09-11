@@ -2,10 +2,10 @@
 [![Build Status](https://travis-ci.org/spacemanspiff2007/EasyCo.svg?branch=master)](https://travis-ci.org/spacemanspiff2007/EasyCo)
 [![Documentation Status](https://readthedocs.org/projects/easyco/badge/?version=latest)](https://easyco.readthedocs.io/en/latest/?badge=latest)
 
-_Easy Configuration with yaml files_
+_Easy Configuration with YAML files_
 
 # Goal
-The goal of **EasyCo** is to provide an **easy** way of **Co**niguration using yaml files for Python programs.
+The goal of **EasyCo** is to provide an **easy** way of **Co**nfiguration using YAML files for Python programs.
 It can automatically create a default configuration from provided default values and will validate the provided data.
 
 # Documentation
